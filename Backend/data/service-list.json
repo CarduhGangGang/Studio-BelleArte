@@ -1,0 +1,66 @@
+{
+  "title": "Os Nossos Serviços",
+  "description": "Mais que cortes — criamos experiências. Cada serviço é pensado para valorizar o teu estilo e te fazer sentir confiante, relaxado e renovado.",
+  "services": [
+    {
+      "id": 1,
+      "name": "Corte Masculino",
+      "desc": "Um clássico que nunca falha. Criamos cortes personalizados, alinhados ao teu rosto e estilo, com técnica e precisão para um visual marcante e elegante.",
+      "img": "/uploads/1752743901526-1752604410137.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Barba & Bigode",
+      "desc": "Mais que aparar, é arte. Modelamos, hidratamos e alinhamos tua barba com técnicas tradicionais como toalha quente, para um acabamento impecável e relaxante.",
+      "img": "/uploads/1752743964245-1752604436611.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Coloração Capilar",
+      "desc": "Realce a tua identidade com cor. Seja para cobrir grisalhos ou mudar de estilo, utilizamos colorações suaves que respeitam a saúde dos teus fios.",
+      "img": "/uploads/1752743827250-1752583810566.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Cuidados com a Pele",
+      "desc": "Tratamentos faciais que renovam. Limpeza profunda, máscaras e hidratação para uma pele saudável, revigorada e luminosa — porque cuidar da pele também é essencial.",
+      "img": "/uploads/1752743985086-1752438905302-440878045.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Aparar & Modelar",
+      "desc": "Retoques de mestre. Mantém o corte sempre alinhado com aparos precisos, respeitando teu estilo original com naturalidade e técnica.",
+      "img": "/uploads/1752744039918-1752584112418.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Corte com Tesoura",
+      "desc": "Liberdade e leveza. Um corte 100% feito à tesoura, perfeito para quem busca fluidez, movimento e acabamento refinado.",
+      "img": "/uploads/1752744084242-1752584060908.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Lavagem Capilar",
+      "desc": "Momento de cuidado e relaxamento. Lavagem profunda com massagem capilar, produtos personalizados e finalização profissional.",
+      "img": "/uploads/1752744101397-1752584036617.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Barbearia Premium",
+      "desc": "Uma experiência sob medida. Ambiente exclusivo, atendimento personalizado e os melhores produtos — porque tu mereces o melhor.",
+      "img": "/uploads/1752744133277-1752438889638-126760988.jpg"
+    },
+    {
+      "id": 9,
+      "name": "Estilo Personalizado",
+      "desc": "Cria um visual só teu. Consulta com o barbeiro para definir um estilo que represente tua essência, com originalidade e personalidade.",
+      "img": "/uploads/1752744148030-1752584138417.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Toalha Quente",
+      "desc": "Tradição e bem-estar. A clássica toalha quente suaviza a pele e eleva o barbear a um momento de puro relaxamento e cuidado.",
+      "img": "/uploads/1752743950977-1752583941511.jpg"
+    }
+  ]
+}

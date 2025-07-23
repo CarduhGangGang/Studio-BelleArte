@@ -1,0 +1,41 @@
+{
+  "logoUrl": "/uploads/logo-1752688073679.png",
+  "titles": [
+    {
+      "key": "home",
+      "label": "Home",
+      "link": "/",
+      "visible": true
+    },
+    {
+      "key": "services",
+      "label": "Serviços",
+      "link": "/services",
+      "visible": true
+    },
+    {
+      "key": "about",
+      "label": "Sobre",
+      "link": "/about-us",
+      "visible": true
+    },
+    {
+      "key": "login",
+      "label": "Login",
+      "link": "/login",
+      "visible": true
+    },
+    {
+      "key": "register",
+      "label": "Register",
+      "link": "/registor",
+      "visible": true
+    },
+    {
+      "key": "contact",
+      "label": "Contactos",
+      "link": "/contect-us",
+      "visible": true
+    }
+  ]
+}
