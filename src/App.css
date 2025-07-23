@@ -1,0 +1,79 @@
+/* Cursor personalizado */
+.cursor-bellearte {
+  cursor: url("/images/favicon.png"), auto;
+}
+
+/* Efeito de entrada com zoom */
+@keyframes fadeZoom {
+  0% { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1.5); }
+}
+
+/* Responsividade: telas pequenas */
+@media (max-width: 576px) {
+  .table-sm td,
+  .table-sm th {
+    padding: 0.35rem;
+    font-size: 0.78rem;
+  }
+
+  .modal-content { font-size: 0.85rem; }
+  .modal-title { font-size: 1rem; }
+
+  .form-control,
+  .form-select {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+}
+
+/* Cor ao selecionar texto */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Stepper neutro e elegante */
+.stepper {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.stepper .step {
+  background-color: transparent;
+  color: #333;
+  font-weight: 500;
+}
+
+.stepper .step .circle {
+  background-color: #ccc;
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.stepper .step .label {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* Estado: ativo */
+.stepper .step.active .circle {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Estado: completo */
+.stepper .step.completed .circle {
+  background-color: #555;
+  color: #fff;
+}
