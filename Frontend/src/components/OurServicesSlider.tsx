@@ -8,7 +8,7 @@ interface Servico {
   nome: string;
   descricao?: string;
   duracao?: number;
-  preco?: number;
+  preco?: number | string | null;
   imageUrl?: string;
 }
 
@@ -24,7 +24,6 @@ const OurServicesSlider = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   useEffect(() => {
-    // Primeiro tenta buscar do localStorage
     const cachedServices = localStorage.getItem("servicos");
     const cachedSection = localStorage.getItem("servicos_section");
 
@@ -36,7 +35,6 @@ const OurServicesSlider = () => {
       setSectionConfig(JSON.parse(cachedSection));
     }
 
-    // Depois tenta buscar da API e atualiza o localStorage
     const fetchAll = async () => {
       try {
         const [servicosData, sectionData] = await Promise.all([
@@ -46,7 +44,6 @@ const OurServicesSlider = () => {
         setServicos(servicosData);
         setSectionConfig(sectionData);
 
-        // Armazena em localStorage
         localStorage.setItem("servicos", JSON.stringify(servicosData));
         localStorage.setItem("servicos_section", JSON.stringify(sectionData));
       } catch (err) {
@@ -67,17 +64,22 @@ const OurServicesSlider = () => {
   return (
     <section className="py-5 bg-white position-relative">
       <div className="container">
-        {/* Cabeçalho da Seção */}
         <div className="text-center mb-5">
-          <h2 className="display-5 fw-bold text-dark">{sectionConfig?.title || "Nossos Serviços"}</h2>
-          <p className="lead text-muted">{sectionConfig?.subtitle || "Subtítulo padrão."}</p>
-          <div className="mx-auto my-3" style={{ width: "60px", height: "3px", backgroundColor: "#c9a255" }}></div>
+          <h2 className="display-5 fw-bold text-dark">
+            {sectionConfig?.title || "Nossos Serviços"}
+          </h2>
+          <p className="lead text-muted">
+            {sectionConfig?.subtitle || "Subtítulo padrão."}
+          </p>
+          <div
+            className="mx-auto my-3"
+            style={{ width: "60px", height: "3px", backgroundColor: "#c9a255" }}
+          ></div>
           <p className="text-secondary col-lg-8 mx-auto">
             {sectionConfig?.description || "Descrição padrão da seção de serviços."}
           </p>
         </div>
 
-        {/* Slider de Serviços */}
         {servicos.length > 0 ? (
           <Swiper
             grabCursor={true}
@@ -105,8 +107,13 @@ const OurServicesSlider = () => {
                     <h5 className="card-title fw-bold text-dark">{item.nome}</h5>
                     <p className="card-text text-muted">{item.descricao || "Sem descrição."}</p>
                     <p className="text-secondary small mb-0">
-                      <strong>Duração:</strong> {item.duracao} min<br />
-                      <strong>Preço:</strong> €{item.preco?.toFixed(2)}
+                      <strong>Duração:</strong> {item.duracao ?? "--"} min<br />
+                      <strong>Preço:</strong> €
+                      {typeof item.preco === "number"
+                        ? item.preco.toFixed(2)
+                        : !isNaN(Number(item.preco))
+                        ? parseFloat(item.preco as any).toFixed(2)
+                        : "--"}
                     </p>
                   </div>
                 </div>

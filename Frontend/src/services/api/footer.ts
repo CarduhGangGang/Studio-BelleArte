@@ -1,4 +1,4 @@
-import axios from "./api";
+import api from "./api";
 
 export interface FooterLink {
   label: string;
@@ -32,7 +32,7 @@ export interface FooterData {
 
 export const getFooter = async (): Promise<FooterData> => {
   try {
-    const res = await axios.get<FooterData>("/footer");
+    const res = await api.get<FooterData>("/footer");
     return res.data;
   } catch (error) {
     console.error("Erro ao buscar o footer:", error);
@@ -42,7 +42,7 @@ export const getFooter = async (): Promise<FooterData> => {
 
 export const updateFooter = async (data: FooterData): Promise<void> => {
   try {
-    await axios.put("/footer", data);
+    await api.put("/footer", data);
   } catch (error) {
     console.error("Erro ao atualizar o footer:", error);
     throw error;

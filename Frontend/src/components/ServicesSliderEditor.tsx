@@ -291,8 +291,8 @@ const ServicesSliderEditor = () => {
                 <h5 className="card-title">{servico.nome}</h5>
                 <p className="card-text text-muted">{servico.descricao}</p>
                 <p className="card-text">
-                  <strong>Duração:</strong> {servico.duracao} min <br />
-                  <strong>Preço:</strong> €{servico.preco?.toFixed(2)}
+                <strong>Duração:</strong> {servico.duracao} min <br />
+                <strong>Preço:</strong> €{!isNaN(Number(servico.preco)) ? Number(servico.preco).toFixed(2) : "0.00"}
                 </p>
                 <div className="d-flex gap-2">
                   <button className="btn btn-sm btn-warning" onClick={() => handleEdit(servico)}>

@@ -8,7 +8,7 @@ type Servico = {
   id: number;
   nome: string;
   descricao: string;
-  preco: number;
+  preco: number | string;
 };
 
 const Services: React.FC = () => {
@@ -38,7 +38,11 @@ const Services: React.FC = () => {
 
   const openModal = (servico: Servico) => {
     setEditingServico(servico);
-    setForm(servico);
+    setForm({
+      nome: servico.nome,
+      descricao: servico.descricao,
+      preco: Number(servico.preco),
+    });
     setShowModal(true);
   };
 
@@ -116,7 +120,7 @@ const Services: React.FC = () => {
                   <td className="text-center">{s.id}</td>
                   <td>{s.nome}</td>
                   <td>{s.descricao}</td>
-                  <td>{s.preco.toFixed(2)}</td>
+                  <td>{Number(s.preco).toFixed(2)}</td>
                   <td className="text-center">
                     <OverlayTrigger placement="top" overlay={<Tooltip>Editar</Tooltip>}>
                       <Button variant="outline-primary" size="sm" className="me-2" onClick={() => openModal(s)}><FaEdit /></Button>

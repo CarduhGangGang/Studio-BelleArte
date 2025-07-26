@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkInsert('team_section', [
+    await queryInterface.bulkInsert('team_sections', [
       {
         title: 'A Nossa Equipa',
         description: 'Barbeiros que respiram estilo e dedicação. Aqui o corte é arte.',
@@ -11,7 +11,7 @@ module.exports = {
       },
     ]);
 
-    await queryInterface.bulkInsert('team_members', [
+    await queryInterface.bulkInsert('TeamMembers', [  // <-- usa exatamente como definido na migration
       {
         name: 'Miguel Santos',
         role: 'Barbeiro Sênior',
@@ -51,7 +51,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkDelete('team_section', null, {});
-    await queryInterface.bulkDelete('team_members', null, {});
+    await queryInterface.bulkDelete('team_sections', null, {});
+    await queryInterface.bulkDelete('TeamMembers', null, {}); // <-- igual ao que criaste
   },
 };

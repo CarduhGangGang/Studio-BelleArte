@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('BookingPage3Configs', [
+    await queryInterface.bulkInsert("BookingPage3Config", [
       {
-        titulo: 'Reserva efetuada com sucesso!',
-        descricao: 'Entraremos em contacto contigo se necessário.',
-        texto_botao: 'Voltar à Página Inicial',
+        titulo: "Reserva efetuada com sucesso!",
+        descricao: "Entraremos em contacto contigo se necessário.",
+        texto_botao: "Voltar à Página Inicial",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -14,6 +14,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('BookingPage3Configs', null, {});
+    await queryInterface.bulkDelete("BookingPage3Config", null, {});
   },
 };

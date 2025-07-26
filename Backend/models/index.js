@@ -55,6 +55,7 @@ const manualModels = [
   { name: 'BookingPage1Config', path: './BookingPage1Config' },
   { name: 'BookingPage2Config', path: './BookingPage2Config' },
   { name: 'BookingPage3Config', path: './BookingPage3Config' },
+  { name: 'Footer', path: './Footer' }, // ✅ Adicionado manualmente
 ];
 
 manualModels.forEach(({ name, path: modelPath }) => {

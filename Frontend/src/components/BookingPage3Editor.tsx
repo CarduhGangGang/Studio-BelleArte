@@ -1,3 +1,4 @@
+// src/pages/BookingPage3Editor.tsx
 import { useEffect, useState } from "react";
 import { getBookingPage3Config, updateBookingPage3Config } from "../services/api/bookingPage3Config";
 import { toast } from "react-toastify";
@@ -13,8 +14,11 @@ const BookingPage3Editor = () => {
     const fetchData = async () => {
       try {
         const data = await getBookingPage3Config();
-        const { id, createdAt, updatedAt, ...rest } = data;
-        setForm(rest);
+        setForm({
+          titulo: data.titulo,
+          descricao: data.descricao,
+          texto_botao: data.texto_botao,
+        });
       } catch {
         toast.error("Erro ao carregar configurações");
       }
@@ -22,7 +26,7 @@ const BookingPage3Editor = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -39,7 +43,7 @@ const BookingPage3Editor = () => {
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4">Edição de Booking 3</h2>
+      <h2 className="mb-4">Editor da Página de Reserva (Passo 3)</h2>
 
       <form onSubmit={handleSubmit} className="row g-4 mb-5">
         <div className="col-md-6">
@@ -79,7 +83,9 @@ const BookingPage3Editor = () => {
         </div>
 
         <div className="col-12">
-          <button type="submit" className="btn btn-dark px-4">Guardar Alterações</button>
+          <button type="submit" className="btn btn-dark px-4">
+            Guardar Alterações
+          </button>
         </div>
       </form>
 
@@ -89,7 +95,13 @@ const BookingPage3Editor = () => {
       <div className="border p-5 bg-white text-center" style={{ maxWidth: 900, margin: "0 auto" }}>
         <div
           className="d-flex justify-content-center align-items-center"
-          style={{ width: 120, height: 120, border: "5px solid #28a745", borderRadius: "50%", margin: "0 auto" }}
+          style={{
+            width: 120,
+            height: 120,
+            border: "5px solid #28a745",
+            borderRadius: "50%",
+            margin: "0 auto",
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +116,9 @@ const BookingPage3Editor = () => {
         </div>
         <h2 className="mt-4">{form.titulo}</h2>
         <p className="text-muted">{form.descricao}</p>
-        <button className="btn btn-dark mt-3" disabled>{form.texto_botao}</button>
+        <button className="btn btn-dark mt-3" disabled>
+          {form.texto_botao}
+        </button>
       </div>
     </div>
   );

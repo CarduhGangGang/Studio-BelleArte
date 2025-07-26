@@ -53,10 +53,10 @@ const HomeCardsEditor = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <i className="flaticon-barber text-3xl mb-2 block"></i>
-        <h2 className="text-xl font-bold">{form.title}</h2>
-        <p className="mt-2 text-sm font-medium">
-          {form.subtitle} — {form.author}
+        <i className="flaticon-barber text-3xl mb-2 d-block"></i>
+        <h2 className="text-xl fw-bold">{form.title || "Título da citação..."}</h2>
+        <p className="mt-2 text-sm">
+          {form.subtitle || "Subtítulo aqui..."} — <em>{form.author || "Autor..."}</em>
         </p>
       </motion.div>
 
@@ -80,7 +80,7 @@ const HomeCardsEditor = () => {
           className="form-control"
           value={form.subtitle}
           onChange={(e) => handleChange("subtitle", e.target.value)}
-          placeholder="Ex: A excelência, portanto..."
+          placeholder="Ex: A excelência, portanto, não é um ato, mas um hábito"
         />
       </div>
 
@@ -95,11 +95,7 @@ const HomeCardsEditor = () => {
         />
       </div>
 
-      <button
-        className="btn btn-dark"
-        onClick={handleSave}
-        disabled={loading}
-      >
+      <button className="btn btn-dark" onClick={handleSave} disabled={loading}>
         {loading ? "💾 A guardar..." : "💾 Guardar alterações"}
       </button>
     </div>

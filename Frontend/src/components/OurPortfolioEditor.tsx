@@ -8,11 +8,11 @@ import {
 } from "../services/api/portfolio";
 
 export default function OurPortfolioEditor() {
-  const [section, setSection] = useState({
-    title: "",
-    subtitle: "",
-    description: "",
-  });
+  const [section, setSection] = useState<null | {
+    title: string;
+    subtitle: string;
+    description: string;
+  }>(null);
 
   const [images, setImages] = useState<{ id: number; imageUrl: string }[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -27,7 +27,10 @@ export default function OurPortfolioEditor() {
 
   useEffect(() => {
     getPortfolioSection()
-      .then(setSection)
+      .then((data) => {
+        if (data) setSection(data);
+        else console.error("❌ Nenhum dado recebido da seção.");
+      })
       .catch(() => alert("Erro ao carregar a secção"));
 
     getPortfolioImages()
@@ -36,10 +39,12 @@ export default function OurPortfolioEditor() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setSection((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (!section) return;
+    setSection((prev) => ({ ...prev!, [e.target.name]: e.target.value }));
   };
 
   const handleSave = async () => {
+    if (!section) return;
     setLoading(true);
     try {
       await updatePortfolioSection(section);
@@ -76,6 +81,8 @@ export default function OurPortfolioEditor() {
       alert("Erro ao excluir imagem.");
     }
   };
+
+  if (!section) return <p>🔄 A carregar secção do portfólio...</p>;
 
   return (
     <div className="container py-5">

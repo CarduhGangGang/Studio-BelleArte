@@ -199,7 +199,7 @@ const HomeSliderEditor = () => {
                 ))}
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Imagem</label>
+                  <label className="form-label fw-semibold"></label>
                   {slide.imageUrl && (
                     <img
                       src={fullImageUrl(slide.imageUrl)}

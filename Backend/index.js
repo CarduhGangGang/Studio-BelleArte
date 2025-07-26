@@ -37,7 +37,7 @@ app.use("/api/menu", require("./routes/menu"));
 app.use("/api/home-slider", require("./routes/homeSliderRoutes"));
 app.use("/api/quote-section", require("./routes/quoteSectionRoutes"));
 app.use("/api/portfolio", require("./routes/portfolioRoutes"));
-app.use("/api/footer", require("./routes/footer"));
+app.use("/api/footer", require("./routes/footerRoutes"));
 app.use("/api/upload", require("./routes/upload"));
 app.use("/api/banner", require("./routes/bannerRoutes"));
 app.use("/api/service-list", require("./routes/serviceListRoutes"));
@@ -76,7 +76,9 @@ const PORT = process.env.PORT || 3000;
     await db.sequelize.authenticate();
     console.log("✅ Conectado ao banco de dados");
 
-    await db.sequelize.sync(); // ou { alter: true } em dev
+    // 🔧 Garante que as tabelas existam e reflitam os models
+    await db.sequelize.sync({ alter: true });
+
     app.listen(PORT, () => {
       console.log(`🚀 Servidor a correr em: http://localhost:${PORT}`);
     });
