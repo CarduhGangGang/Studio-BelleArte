@@ -1,4 +1,13 @@
 {
+  "name": "studio-bellearte-api",
+  "version": "1.0.0",
+  "description": "Backend do projeto Studio BelleArte",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "sequelize": "sequelize"
+  },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.18",
     "@fullcalendar/react": "^6.1.18",
@@ -18,5 +27,8 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "sequelize-cli": "^6.6.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
