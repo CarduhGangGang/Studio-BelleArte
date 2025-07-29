@@ -52,7 +52,7 @@ const PORT = process.env.PORT || 3000;
     await db.sequelize.sync({ alter: true });
 
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando: http://localhost:${PORT}`);
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
     });
   } catch (err) {
     console.error("❌ Erro ao iniciar o servidor:", err);
