@@ -3,21 +3,39 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.js')[env];
+require('dotenv').config(); // 🔹 Garante que o .env seja carregado
 
+const basename = path.basename(__filename);
 const db = {};
+
 let sequelize;
 
-// 🔹 Inicializar Sequelize
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+// 🔹 Conexão via DATABASE_URL (usada no Render)
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    protocol: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: process.env.RENDER ? { require: true, rejectUnauthorized: false } : false,
+    },
+  });
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  // 🔹 Fallback local (útil para desenvolvimento local)
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      dialect: 'postgres',
+      logging: false,
+    }
+  );
 }
 
-// 🔹 Carregar modelos automaticamente (exceto este ficheiro e testes)
+// 🔹 Carregar modelos automaticamente
 fs
   .readdirSync(__dirname)
   .filter(file =>
@@ -45,7 +63,7 @@ fs
     }
   });
 
-// 🔹 Carregar modelos manualmente (caso algum precise de atenção especial)
+// 🔹 Carregar modelos manualmente (caso necessário)
 const manualModels = [
   { name: 'Header', path: './Header' },
   { name: 'BannerService', path: './BannerService' },
@@ -55,7 +73,7 @@ const manualModels = [
   { name: 'BookingPage1Config', path: './BookingPage1Config' },
   { name: 'BookingPage2Config', path: './BookingPage2Config' },
   { name: 'BookingPage3Config', path: './BookingPage3Config' },
-  { name: 'Footer', path: './Footer' }, // ✅ Adicionado manualmente
+  { name: 'Footer', path: './Footer' },
 ];
 
 manualModels.forEach(({ name, path: modelPath }) => {
@@ -70,14 +88,14 @@ manualModels.forEach(({ name, path: modelPath }) => {
   }
 });
 
-// 🔹 Aplicar associações entre os modelos (se existirem)
+// 🔹 Aplicar associações (relacionamentos)
 Object.keys(db).forEach(modelName => {
   if (typeof db[modelName].associate === 'function') {
     db[modelName].associate(db);
   }
 });
 
-// 🔹 Exportar
+// 🔹 Exportar o objeto db com a instância do Sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
