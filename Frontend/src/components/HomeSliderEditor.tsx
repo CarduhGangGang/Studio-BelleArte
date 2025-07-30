@@ -22,7 +22,7 @@ const HomeSliderEditor = () => {
   const [loading, setLoading] = useState(false);
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL 
   const fullImageUrl = (url: string) =>
     url.startsWith("http")
       ? url

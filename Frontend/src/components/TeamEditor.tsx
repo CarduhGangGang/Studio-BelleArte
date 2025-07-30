@@ -50,7 +50,7 @@ const TeamEditor = () => {
       const url = await uploadTeamImage(file);
       const fullUrl = url.startsWith("http")
         ? url
-        : `${import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"}${url}`;
+        : `${import.meta.env.VITE_API_BASE_URL}${url}`;
       handleChange(i, "imageUrl", fullUrl);
       toast.success("Imagem carregada!");
     } catch (err) {

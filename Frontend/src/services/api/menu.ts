@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/menu"; 
+const API_URL = `${import.meta.env.VITE_API_URL}/api/menu`;
 
 export const getMenuData = async () => {
   const response = await axios.get(API_URL);

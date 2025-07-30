@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const BASE_API = `${import.meta.env.VITE_API_URL}/api`;
 const API = `${BASE_API}/home-slider`;
 
 export const getSlides = async () => (await axios.get(API)).data;

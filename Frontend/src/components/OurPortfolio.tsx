@@ -20,7 +20,7 @@ const OurPortfolio = () => {
   const [section, setSection] = useState<PortfolioSection | null>(null);
   const [images, setImages] = useState<PortfolioImage[]>([]);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL 
 
   const getImageUrl = (url?: string) =>
     url?.startsWith("http")

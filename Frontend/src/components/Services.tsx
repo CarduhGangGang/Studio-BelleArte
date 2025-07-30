@@ -19,7 +19,8 @@ const Services: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 20;
 
-  const apiUrl = "http://localhost:3000/api/servico";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const apiUrl = `${API_URL}/api/servico`;
 
   const fetchServicos = async () => {
     try {

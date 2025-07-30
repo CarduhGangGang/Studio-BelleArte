@@ -32,7 +32,7 @@ const Home_slider = () => {
     fetchSlides();
   }, []);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL 
   const getFullImageUrl = (url: string) =>
     url.startsWith("http")
       ? url

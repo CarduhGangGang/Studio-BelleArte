@@ -16,7 +16,7 @@ interface ServiceData {
   services: ServiceItem[];
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE = import.meta.env.VITE_API_URL;
 const fullImageUrl = (path: string) =>
   path.startsWith("http") ? path : `${API_BASE}/${path.replace(/^\/+/, "")}`;
 

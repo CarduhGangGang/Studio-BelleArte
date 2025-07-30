@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api", // 🔁 adapta se a porta for diferente
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
 });
 
 // ✅ Adiciona token JWT automaticamente

@@ -28,7 +28,7 @@ const ServicesSliderEditor = () => {
   const [sectionSubtitle, setSectionSubtitle] = useState("");
   const [sectionDescription, setSectionDescription] = useState("");
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const loadServicos = async () => {
     const data = await getServicos();

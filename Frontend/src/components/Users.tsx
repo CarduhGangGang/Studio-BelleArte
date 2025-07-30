@@ -30,7 +30,7 @@ const Users: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 20;
 
-  const apiUrl = "http://localhost:3000/api/utilizador";
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/utilizador`;
 
   const fetchUsers = async () => {
     try {

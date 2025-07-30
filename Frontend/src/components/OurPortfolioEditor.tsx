@@ -18,7 +18,7 @@ export default function OurPortfolioEditor() {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL 
 
   const getImage = (url?: string) =>
     url?.startsWith("http")
