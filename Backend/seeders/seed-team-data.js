@@ -11,39 +11,39 @@ module.exports = {
       },
     ]);
 
-    await queryInterface.bulkInsert('TeamMembers', [  // <-- usa exatamente como definido na migration
+    await queryInterface.bulkInsert('TeamMembers', [
       {
         name: 'Miguel Santos',
         role: 'Barbeiro Sênior',
-        imageUrl: '/uploads/team/miguel.jpg',
+        imageUrl: '', 
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'Lucas Ferreira',
         role: 'Especialista em Estilo Beard',
-        imageUrl: '/uploads/team/lucas.jpg',
+        imageUrl: '',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'Rafael Costa',
         role: 'Corte Moderno',
-        imageUrl: '/uploads/team/rafael.jpg',
+        imageUrl: '',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'João Almeida',
         role: 'Mestre da Navalha',
-        imageUrl: '/uploads/team/joao.jpg',
+        imageUrl: '',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'Pedro Matos',
         role: 'Barbeiro Criativo',
-        imageUrl: '/uploads/team/pedro.jpg',
+        imageUrl: '',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -52,6 +52,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.bulkDelete('team_sections', null, {});
-    await queryInterface.bulkDelete('TeamMembers', null, {}); // <-- igual ao que criaste
+    await queryInterface.bulkDelete('TeamMembers', null, {});
   },
 };

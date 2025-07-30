@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('Footers', [{
-      logoUrl: '/uploads/logo.png',
+      logoUrl: '',
       phrase: 'A sua beleza, o nosso compromisso.',
       sectionEmpresa: JSON.stringify({
         title: 'Empresa',

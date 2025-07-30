@@ -4,32 +4,32 @@ module.exports = {
   async up(queryInterface) {
     await queryInterface.bulkInsert("PortfolioImages", [
       {
-        imageUrl: "/uploads/portfolio1.jpg",
+        imageUrl: "", // ou use uma URL completa (https)
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        imageUrl: "/uploads/portfolio2.jpg",
+        imageUrl: "", // substitua se tiver link público (ex: Cloudinary, Imgur etc.)
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        imageUrl: "/uploads/portfolio3.jpg",
+        imageUrl: "",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        imageUrl: "/uploads/portfolio4.jpg",
+        imageUrl: "",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        imageUrl: "/uploads/portfolio5.jpg",
+        imageUrl: "",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        imageUrl: "/uploads/portfolio6.jpg",
+        imageUrl: "",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
