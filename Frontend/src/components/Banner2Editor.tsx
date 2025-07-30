@@ -11,7 +11,7 @@ const Banner2Editor = () => {
   const [banner, setBanner] = useState<BannerData>({ title: "", image: "" });
   const [file, setFile] = useState<File | null>(null);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL 
   const fullImageUrl = (url: string) =>
     url.startsWith("http")
       ? url
