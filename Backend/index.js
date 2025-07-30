@@ -45,12 +45,12 @@ app.use("/api/about", require("./routes/about.routes"));
 app.use("/api/pricing", require("./routes/pricingRoutes"));
 app.use("/api/team", require("./routes/teamRoutes"));
 app.use("/api/login-content", require("./routes/loginContentRoutes"));
-app.use("/api", require("./routes/registerContentRoutes"));
 app.use("/api/contact-section", require("./routes/contactSectionRoutes"));
 app.use("/api/team-section", require("./routes/teamSection"));
 app.use("/api/booking-page-1-config", require("./routes/bookingPage1ConfigRoutes"));
 app.use("/api/booking-page-2-config", require("./routes/bookingPage2ConfigRoutes"));
-app.use("/api", require("./routes/bookingPage3ConfigRoutes"));
+app.use("/api/booking-page-3-config", require("./routes/bookingPage3ConfigRoutes")); // ✅ Corrigido nome e rota
+app.use("/api/register-content", require("./routes/registerContentRoutes")); // ✅ Nome mais claro do que só "/api"
 
 // ✅ Rota de teste
 app.get("/", (req, res) => {
@@ -76,7 +76,7 @@ const PORT = process.env.PORT || 3000;
     await db.sequelize.authenticate();
     console.log("✅ Conectado ao banco de dados");
 
-    // 🔧 Garante que as tabelas existam e reflitam os models
+    // 🔧 Sincroniza modelos com o banco (evite `alter: true` em produção)
     await db.sequelize.sync({ alter: true });
 
     app.listen(PORT, () => {
