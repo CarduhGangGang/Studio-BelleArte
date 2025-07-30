@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: `${import.meta.env.VITE_API_URL}/api`, // ✅ Corrigido
 });
 
 // 🔁 Renova o token se expirar (automático)
@@ -20,7 +20,7 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-// Interceptor para incluir o token em todos os pedidos
+// ✅ Adiciona token no cabeçalho de cada request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -29,7 +29,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor de resposta para tratar token expirado
+// ✅ Intercepta resposta para tratar token expirado
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -63,8 +63,9 @@ api.interceptors.response.use(
           throw new Error("Sem refresh token");
         }
 
+        // ✅ Usa API externa, não localhost
         const { data } = await axios.post(
-          "http://localhost:3000/api/auth/refresh",
+          `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
           { refreshToken }
         );
 
