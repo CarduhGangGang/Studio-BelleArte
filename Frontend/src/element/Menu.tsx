@@ -34,7 +34,7 @@ const Menu = ({
   const { logoUrl: contextLogoUrl, setLogoUrl: updateLogoContext } = useLogo();
 
   const path = location.pathname;
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
