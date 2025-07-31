@@ -25,7 +25,7 @@ const db = require("./models");
 
 // ✅ Importar e aplicar rotas principais
 app.use("/api/utilizador", require("./routes/utilizadorRoutes"));
-app.use("/auth", require("./routes/authRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/agendamento", require("./routes/agendamentoRoutes"));
 app.use("/api/servico", require("./routes/servicoRoutes"));
 app.use("/api/service", require("./routes/serviceRoutes"));
@@ -44,7 +44,7 @@ app.use("/api/service-list", require("./routes/serviceListRoutes"));
 app.use("/api/about", require("./routes/about.routes"));
 app.use("/api/pricing", require("./routes/pricingRoutes"));
 app.use("/api/team", require("./routes/teamRoutes"));
-app.use("login-content", require("./routes/loginContentRoutes"));
+app.use("/api/login-content", require("./routes/loginContentRoutes"));
 app.use("/api/contact-section", require("./routes/contactSectionRoutes"));
 app.use("/api/team-section", require("./routes/teamSection"));
 app.use("/api/booking-page-1-config", require("./routes/bookingPage1ConfigRoutes"));
