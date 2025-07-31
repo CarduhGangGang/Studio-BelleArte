@@ -49,8 +49,8 @@ app.use("/api/contact-section", require("./routes/contactSectionRoutes"));
 app.use("/api/team-section", require("./routes/teamSection"));
 app.use("/api/booking-page-1-config", require("./routes/bookingPage1ConfigRoutes"));
 app.use("/api/booking-page-2-config", require("./routes/bookingPage2ConfigRoutes"));
-app.use("/api/booking-page-3-config", require("./routes/bookingPage3ConfigRoutes")); // ✅ Corrigido nome e rota
-app.use("/api/register-content", require("./routes/registerContentRoutes")); // ✅ Nome mais claro do que só "/api"
+app.use("/api/booking-page-3-config", require("./routes/bookingPage3ConfigRoutes"));
+app.use("/api/register-content", require("./routes/registerContentRoutes")); 
 
 // ✅ Rota de teste
 app.get("/", (req, res) => {

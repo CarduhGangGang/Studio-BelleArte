@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`, // ✅ Corrigido
+  baseURL: `${import.meta.env.VITE_API_URL}/api`, // ✅ Prefixo /api incluído
 });
 
-// 🔁 Renova o token se expirar (automático)
+// 🔄 Controle de renovação de token
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
@@ -16,11 +16,10 @@ const processQueue = (error: any, token: string | null = null) => {
       prom.reject(error);
     }
   });
-
   failedQueue = [];
 };
 
-// ✅ Adiciona token no cabeçalho de cada request
+// ✅ Adiciona o token JWT em todas as requisições
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -29,17 +28,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Intercepta resposta para tratar token expirado
+// ✅ Intercepta respostas para renovar token automaticamente
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (
+    const isTokenExpired =
       error.response?.status === 403 &&
       !originalRequest._retry &&
-      error.response?.data?.mensagem?.includes("Token expirado")
-    ) {
+      error.response?.data?.mensagem?.includes("Token expirado");
+
+    if (isTokenExpired) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -58,19 +58,16 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-
         if (!refreshToken) {
           throw new Error("Sem refresh token");
         }
 
-        // ✅ Usa API externa, não localhost
         const { data } = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
           { refreshToken }
         );
 
         localStorage.setItem("token", data.token);
-
         processQueue(null, data.token);
 
         originalRequest.headers.Authorization = `Bearer ${data.token}`;

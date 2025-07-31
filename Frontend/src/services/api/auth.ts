@@ -1,8 +1,6 @@
-import api from "./api";
-
 // Login
 export const login = (dados: { email: string; password: string }) =>
-  api.post("/auth/login", dados);
+  api.post("/auth/login", dados); 
 
 // Registo de novo utilizador
 export const register = (dados: {
@@ -10,4 +8,4 @@ export const register = (dados: {
   email: string;
   password: string;
   role_id: number;
-}) => api.post("/auth/register", dados);
+}) => api.post("/auth/register", dados); 
