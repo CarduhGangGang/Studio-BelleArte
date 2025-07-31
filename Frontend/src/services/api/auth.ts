@@ -1,3 +1,5 @@
+import api from "./api";
+
 // Login
 export const login = (dados: { email: string; password: string }) =>
   api.post("/auth/login", dados); 
