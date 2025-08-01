@@ -2,21 +2,13 @@ module.exports = (sequelize, DataTypes) => {
   const BookingPage3Config = sequelize.define(
     "BookingPage3Config",
     {
-      titulo: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      descricao: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      texto_botao: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      titulo: DataTypes.STRING,
+      descricao: DataTypes.STRING,
+      texto_botao: DataTypes.STRING,
     },
     {
       tableName: "BookingPage3Config", 
+      timestamps: true,
     }
   );
 
