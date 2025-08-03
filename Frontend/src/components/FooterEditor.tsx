@@ -6,7 +6,7 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Preview do footer
+// Preview do footer com proteções contra valores nulos
 const FooterPreview = ({ data }: { data: FooterData }) => {
   return (
     <footer style={{ backgroundColor: "#000", color: "#fff", padding: "2rem 0" }}>
@@ -22,10 +22,10 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
       </div>
 
       <div className="container d-flex flex-wrap justify-content-around text-start text-md-start text-center">
-        {[data.sectionEmpresa, data.sectionLinks].map((section, idx) => (
+        {[data.sectionEmpresa || { title: "", links: [] }, data.sectionLinks || { title: "", links: [] }].map((section, idx) => (
           <div key={idx} className="mb-3 col-12 col-md-auto">
-            <h5 className="fw-bold">{section?.title || "Título da seção"}</h5>
-            {(section?.links || []).map((link, i) => (
+            <h5 className="fw-bold">{section.title || "Título da seção"}</h5>
+            {(section.links || []).map((link, i) => (
               <div key={i}>
                 <a
                   href={link.url}
@@ -316,7 +316,7 @@ const FooterEditor = () => {
         💾 Guardar Alterações
       </button>
 
-      {/* Preview do Footer */}
+      {/* Preview */}
       <div className="mt-5">
         <h4 className="fw-bold mb-3">🔍 Pré-visualização do Footer</h4>
         <div style={{ border: "1px solid #ccc", borderRadius: "8px", overflow: "hidden" }}>

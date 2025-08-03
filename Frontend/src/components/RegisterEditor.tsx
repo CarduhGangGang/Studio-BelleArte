@@ -14,6 +14,8 @@ const RegisterEditor = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const defaultTexts = {
     register_heading: "Cria a tua conta",
     register_title: "INFORMAÇÕES PESSOAIS",
@@ -36,7 +38,7 @@ const RegisterEditor = () => {
   useEffect(() => {
     getRegisterContent()
       .then((res) => setTexts({ ...defaultTexts, ...res }))
-      .catch(() => toast.error("Erro ao carregar textos"))
+      .catch(() => toast.error("❌ Erro ao carregar textos"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -47,9 +49,9 @@ const RegisterEditor = () => {
   const handleSaveTexts = async () => {
     try {
       await updateRegisterContent(texts);
-      toast.success("Textos salvos com sucesso!");
+      toast.success("✅ Textos salvos com sucesso!");
     } catch {
-      toast.error("Erro ao salvar os textos.");
+      toast.error("❌ Erro ao salvar os textos.");
     }
   };
 
@@ -85,10 +87,10 @@ const RegisterEditor = () => {
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4">Edição da Página de Registo</h2>
+      <h2 className="mb-4">📝 Edição da Página de Registo</h2>
       <div className="row">
-        {/* Editor */}
-        <div className="col-md-6 border-end">
+        {/* Editor de textos */}
+        <div className="col-md-6 border-end pe-4">
           {Object.entries(texts).map(([key, value]) => (
             <div key={key} className="form-group mb-3">
               <label className="form-label fw-bold">{key}</label>
@@ -100,12 +102,12 @@ const RegisterEditor = () => {
             </div>
           ))}
           <button className="btn btn-success mt-3" onClick={handleSaveTexts}>
-            Salvar Alterações
+            💾 Guardar Alterações
           </button>
         </div>
 
-        {/* Preview funcional */}
-        <div className="col-md-6">
+        {/* Preview do formulário */}
+        <div className="col-md-6 ps-4">
           <div className="p-4 border rounded bg-light">
             <h3 className="text-center mb-4">{texts.register_heading}</h3>
             <form onSubmit={handleRegister}>
@@ -176,7 +178,8 @@ const RegisterEditor = () => {
             </form>
 
             <p className="text-center mt-3">
-              {texts.text_login_prompt} <Link to="/login"><strong>{texts.link_login}</strong></Link>
+              {texts.text_login_prompt}{" "}
+              <Link to="/login"><strong>{texts.link_login}</strong></Link>
             </p>
           </div>
         </div>
