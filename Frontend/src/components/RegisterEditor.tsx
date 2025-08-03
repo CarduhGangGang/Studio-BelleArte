@@ -16,7 +16,7 @@ const RegisterEditor = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const defaultTexts = {
+  const defaultTexts: Record<string, string> = {
     register_heading: "Cria a tua conta",
     register_title: "INFORMAÇÕES PESSOAIS",
     register_subtitle: "Preenche os teus dados abaixo.",
@@ -37,7 +37,10 @@ const RegisterEditor = () => {
 
   useEffect(() => {
     getRegisterContent()
-      .then((res) => setTexts({ ...defaultTexts, ...res }))
+      .then((res) => {
+        const merged = { ...defaultTexts, ...res };
+        setTexts(merged);
+      })
       .catch(() => toast.error("❌ Erro ao carregar textos"))
       .finally(() => setLoading(false));
   }, []);
@@ -87,16 +90,16 @@ const RegisterEditor = () => {
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4">📝 Edição da Página de Registo</h2>
+      <h2 className="mb-4">📝 {texts.register_heading || defaultTexts.register_heading}</h2>
       <div className="row">
         {/* Editor de textos */}
         <div className="col-md-6 border-end pe-4">
-          {Object.entries(texts).map(([key, value]) => (
+          {Object.entries(defaultTexts).map(([key]) => (
             <div key={key} className="form-group mb-3">
               <label className="form-label fw-bold">{key}</label>
               <input
                 className="form-control"
-                value={value}
+                value={texts[key] || ""}
                 onChange={(e) => handleTextChange(key, e.target.value)}
               />
             </div>
