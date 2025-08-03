@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getFooter, updateFooter, FooterData } from "../services/api/footer";
 
-// Rola para o topo ao clicar em links
+// Função auxiliar para rolar até o topo
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Pré-visualização do footer
+// Preview do footer
 const FooterPreview = ({ data }: { data: FooterData }) => {
   return (
     <footer style={{ backgroundColor: "#000", color: "#fff", padding: "2rem 0" }}>
@@ -24,7 +24,7 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
       <div className="container d-flex flex-wrap justify-content-around text-start text-md-start text-center">
         {[data.sectionEmpresa, data.sectionLinks].map((section, idx) => (
           <div key={idx} className="mb-3 col-12 col-md-auto">
-            <h5 className="fw-bold">{section?.title || "Título"}</h5>
+            <h5 className="fw-bold">{section?.title || "Título da seção"}</h5>
             {(section?.links || []).map((link, i) => (
               <div key={i}>
                 <a
@@ -118,7 +118,7 @@ const FooterEditor = () => {
     field: "label" | "url",
     value: string
   ) => {
-    const updatedLinks = [...data[section].links];
+    const updatedLinks = [...(data[section]?.links || [])];
     updatedLinks[index][field] = value;
     setData((prev) => ({
       ...prev,
@@ -147,7 +147,9 @@ const FooterEditor = () => {
           className="form-control"
           placeholder="https://exemplo.com/logo.png"
           value={data.logoUrl}
-          onChange={(e) => setData((prev) => ({ ...prev, logoUrl: e.target.value }))}
+          onChange={(e) =>
+            setData((prev) => ({ ...prev, logoUrl: e.target.value }))
+          }
         />
       </div>
 
@@ -158,21 +160,23 @@ const FooterEditor = () => {
           className="form-control"
           rows={2}
           value={data.phrase}
-          onChange={(e) => setData((prev) => ({ ...prev, phrase: e.target.value }))}
+          onChange={(e) =>
+            setData((prev) => ({ ...prev, phrase: e.target.value }))
+          }
         />
       </div>
 
       {/* Empresa & Links Úteis */}
       {(["sectionEmpresa", "sectionLinks"] as const).map((section) => (
         <div key={section} className="mb-4">
-          <h5 className="fw-bold">{data[section].title || "Título da seção"}</h5>
+          <h5 className="fw-bold">{data[section]?.title || "Título da Seção"}</h5>
           <input
             type="text"
             className="form-control mb-2"
-            value={data[section].title}
+            value={data[section]?.title || ""}
             onChange={(e) => handleInput(section, "title", e.target.value)}
           />
-          {data[section].links.map((link, idx) => (
+          {(data[section]?.links || []).map((link, idx) => (
             <div className="d-flex gap-2 mb-2" key={idx}>
               <input
                 className="form-control"
@@ -199,7 +203,7 @@ const FooterEditor = () => {
                 ...prev,
                 [section]: {
                   ...prev[section],
-                  links: [...prev[section].links, { label: "", url: "" }],
+                  links: [...(prev[section]?.links || []), { label: "", url: "" }],
                 },
               }))
             }
@@ -215,19 +219,19 @@ const FooterEditor = () => {
         <input
           type="text"
           className="form-control mb-2"
-          value={data.sectionContactos.title}
+          value={data.sectionContactos?.title || ""}
           onChange={(e) =>
             handleInput("sectionContactos", "title", e.target.value)
           }
         />
-        {data.sectionContactos.content.map((line, i) => (
+        {(data.sectionContactos?.content || []).map((line, i) => (
           <textarea
             key={i}
             className="form-control mb-2"
             rows={2}
             value={line}
             onChange={(e) => {
-              const updated = [...data.sectionContactos.content];
+              const updated = [...(data.sectionContactos?.content || [])];
               updated[i] = e.target.value;
               setData((prev) => ({
                 ...prev,
@@ -246,7 +250,7 @@ const FooterEditor = () => {
               ...prev,
               sectionContactos: {
                 ...prev.sectionContactos,
-                content: [...prev.sectionContactos.content, ""],
+                content: [...(prev.sectionContactos?.content || []), ""],
               },
             }))
           }
@@ -258,7 +262,7 @@ const FooterEditor = () => {
       {/* Redes Sociais */}
       <div className="mb-4">
         <h5 className="fw-bold">Redes Sociais</h5>
-        {data.socialMedia.map((media, i) => (
+        {(data.socialMedia || []).map((media, i) => (
           <div className="d-flex gap-2 mb-2" key={i}>
             <input
               className="form-control"
@@ -287,7 +291,7 @@ const FooterEditor = () => {
           onClick={() =>
             setData((prev) => ({
               ...prev,
-              socialMedia: [...prev.socialMedia, { platform: "", url: "" }],
+              socialMedia: [...(prev.socialMedia || []), { platform: "", url: "" }],
             }))
           }
         >
@@ -301,7 +305,7 @@ const FooterEditor = () => {
         <textarea
           className="form-control"
           rows={2}
-          value={data.copyright}
+          value={data?.copyright}
           onChange={(e) =>
             setData((prev) => ({ ...prev, copyright: e.target.value }))
           }
@@ -312,7 +316,7 @@ const FooterEditor = () => {
         💾 Guardar Alterações
       </button>
 
-      {/* Preview */}
+      {/* Preview do Footer */}
       <div className="mt-5">
         <h4 className="fw-bold mb-3">🔍 Pré-visualização do Footer</h4>
         <div style={{ border: "1px solid #ccc", borderRadius: "8px", overflow: "hidden" }}>
