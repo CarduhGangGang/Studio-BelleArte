@@ -110,7 +110,7 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
-      {/* Preview com Menu (usa logo atual e títulos editáveis) */}
+      {/* 🔍 Preview do Menu com logo */}
       <div
         className="border-bottom bg-white w-100 py-4"
         style={{
