@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getFooter, updateFooter, FooterData } from "../services/api/footer";
 
-// Função para rolar para o topo
+// Rola para o topo ao clicar em links
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Componente de pré-visualização do footer
+// Pré-visualização do footer
 const FooterPreview = ({ data }: { data: FooterData }) => {
   return (
     <footer style={{ backgroundColor: "#000", color: "#fff", padding: "2rem 0" }}>
@@ -24,8 +24,8 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
       <div className="container d-flex flex-wrap justify-content-around text-start text-md-start text-center">
         {[data.sectionEmpresa, data.sectionLinks].map((section, idx) => (
           <div key={idx} className="mb-3 col-12 col-md-auto">
-            <h5 className="fw-bold">{section.title}</h5>
-            {section.links.map((link, i) => (
+            <h5 className="fw-bold">{section?.title || "Título"}</h5>
+            {(section?.links || []).map((link, i) => (
               <div key={i}>
                 <a
                   href={link.url}
@@ -40,8 +40,8 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
         ))}
 
         <div className="mb-3 col-12 col-md-auto">
-          <h5 className="fw-bold">{data.sectionContactos.title}</h5>
-          {data.sectionContactos.content.map((line, i) => (
+          <h5 className="fw-bold">{data.sectionContactos?.title || "Contactos"}</h5>
+          {(data.sectionContactos?.content || []).map((line, i) => (
             <p key={i} className="mb-1">{line}</p>
           ))}
         </div>
@@ -50,9 +50,11 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
       <hr style={{ borderColor: "#444" }} className="my-4" />
 
       <div className="container d-flex justify-content-between align-items-center flex-wrap text-center text-md-start">
-        <small className="w-100 w-md-auto mb-2 mb-md-0">{data.copyright}</small>
+        <small className="w-100 w-md-auto mb-2 mb-md-0">
+          {data?.copyright}
+        </small>
         <div className="d-flex gap-3 justify-content-center w-100 w-md-auto">
-          {data.socialMedia.map((s, i) => (
+          {(data.socialMedia || []).map((s, i) => (
             <a
               key={i}
               href={s.url}
@@ -61,8 +63,8 @@ const FooterPreview = ({ data }: { data: FooterData }) => {
               className="text-white fs-5"
               onClick={scrollToTop}
             >
-              {s.platform.toLowerCase().includes("instagram") && <i className="bi bi-instagram"></i>}
-              {s.platform.toLowerCase().includes("tiktok") && <i className="bi bi-tiktok"></i>}
+              {s.platform.toLowerCase().includes("instagram") && <i className="bi bi-instagram" />}
+              {s.platform.toLowerCase().includes("tiktok") && <i className="bi bi-tiktok" />}
               {!["instagram", "tiktok"].includes(s.platform.toLowerCase()) && s.platform}
             </a>
           ))}
@@ -76,16 +78,26 @@ const FooterEditor = () => {
   const [data, setData] = useState<FooterData>({
     logoUrl: "",
     phrase: "",
-    sectionEmpresa: { title: "Empresa", links: [] },
-    sectionLinks: { title: "Links Úteis", links: [] },
-    sectionContactos: { title: "Contactos", content: [] },
+    sectionEmpresa: { title: "", links: [] },
+    sectionLinks: { title: "", links: [] },
+    sectionContactos: { title: "", content: [] },
     socialMedia: [],
     copyright: "",
   });
 
   useEffect(() => {
     getFooter()
-      .then(setData)
+      .then((res) => {
+        setData({
+          logoUrl: res.logoUrl || "",
+          phrase: res.phrase || "",
+          sectionEmpresa: res.sectionEmpresa || { title: "", links: [] },
+          sectionLinks: res.sectionLinks || { title: "", links: [] },
+          sectionContactos: res.sectionContactos || { title: "", content: [] },
+          socialMedia: res.socialMedia || [],
+          copyright: res.copyright || "",
+        });
+      })
       .catch(() => alert("❌ Erro ao carregar dados do footer."));
   }, []);
 
@@ -127,7 +139,7 @@ const FooterEditor = () => {
     <div className="container py-5">
       <h2 className="mb-4 fw-bold">Edição do Footer</h2>
 
-      {/* Logo via URL */}
+      {/* Logo */}
       <div className="mb-4">
         <label className="form-label">URL do Logo</label>
         <input
@@ -135,9 +147,7 @@ const FooterEditor = () => {
           className="form-control"
           placeholder="https://exemplo.com/logo.png"
           value={data.logoUrl}
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, logoUrl: e.target.value }))
-          }
+          onChange={(e) => setData((prev) => ({ ...prev, logoUrl: e.target.value }))}
         />
       </div>
 
@@ -148,16 +158,14 @@ const FooterEditor = () => {
           className="form-control"
           rows={2}
           value={data.phrase}
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, phrase: e.target.value }))
-          }
+          onChange={(e) => setData((prev) => ({ ...prev, phrase: e.target.value }))}
         />
       </div>
 
       {/* Empresa & Links Úteis */}
       {(["sectionEmpresa", "sectionLinks"] as const).map((section) => (
         <div key={section} className="mb-4">
-          <h5 className="fw-bold">{data[section].title}</h5>
+          <h5 className="fw-bold">{data[section].title || "Título da seção"}</h5>
           <input
             type="text"
             className="form-control mb-2"
@@ -203,7 +211,7 @@ const FooterEditor = () => {
 
       {/* Contactos */}
       <div className="mb-4">
-        <h5 className="fw-bold">{data.sectionContactos.title}</h5>
+        <h5 className="fw-bold">Contactos</h5>
         <input
           type="text"
           className="form-control mb-2"
@@ -289,7 +297,7 @@ const FooterEditor = () => {
 
       {/* Copyright */}
       <div className="mb-4">
-        <label className="form-label">Texto do Rodapé Inferior (Copyright)</label>
+        <label className="form-label">Texto do Rodapé Inferior</label>
         <textarea
           className="form-control"
           rows={2}
@@ -304,7 +312,7 @@ const FooterEditor = () => {
         💾 Guardar Alterações
       </button>
 
-      {/* Preview do Footer */}
+      {/* Preview */}
       <div className="mt-5">
         <h4 className="fw-bold mb-3">🔍 Pré-visualização do Footer</h4>
         <div style={{ border: "1px solid #ccc", borderRadius: "8px", overflow: "hidden" }}>
