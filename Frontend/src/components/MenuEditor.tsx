@@ -61,6 +61,17 @@ const MenuEditor = () => {
     }
   };
 
+  const handleSaveLogoOnly = async () => {
+    try {
+      await updateMenuData({ logoUrl: preview, titles: originalTitles });
+      setOriginalLogo(preview);
+      setLogoUrl(preview);
+      toast.success("🖼️ Logo salvo com sucesso!");
+    } catch {
+      toast.error("❌ Erro ao salvar o logo");
+    }
+  };
+
   const handleSaveChanges = async () => {
     const hasEmpty = titles.some((item) => item.label.trim() === "");
     if (hasEmpty) {
@@ -86,9 +97,10 @@ const MenuEditor = () => {
     toast.info("↩️ Menu restaurado ao estado inicial.");
   };
 
-  const hasChanges =
-    preview !== originalLogo ||
+  const hasLogoChanged = preview !== originalLogo;
+  const hasTitlesChanged =
     JSON.stringify(titles) !== JSON.stringify(originalTitles);
+  const hasAnyChanges = hasLogoChanged || hasTitlesChanged;
 
   return (
     <motion.div
@@ -98,7 +110,7 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
-      {/* 🔍 Preview do Menu com logo */}
+      {/* Preview com Menu (usa logo atual e títulos editáveis) */}
       <div
         className="border-bottom bg-white w-100 py-4"
         style={{
@@ -130,6 +142,16 @@ const MenuEditor = () => {
               />
             </div>
           )}
+        </div>
+
+        <div className="mb-4">
+          <button
+            className="btn btn-outline-primary"
+            onClick={handleSaveLogoOnly}
+            disabled={!hasLogoChanged}
+          >
+            💾 Salvar somente o logo
+          </button>
         </div>
 
         <h5 className="mb-3">📝 Itens do Menu</h5>
@@ -196,18 +218,18 @@ const MenuEditor = () => {
           </div>
         ))}
 
-        <div className="d-flex gap-3 mt-4">
+        <div className="d-flex gap-3 mt-4 flex-wrap">
           <button
             className="btn btn-success"
             onClick={handleSaveChanges}
-            disabled={!hasChanges}
+            disabled={!hasAnyChanges}
           >
             💾 Salvar alterações
           </button>
           <button
             className="btn btn-outline-secondary"
             onClick={handleReset}
-            disabled={!hasChanges}
+            disabled={!hasAnyChanges}
           >
             ↩️ Restaurar original
           </button>
