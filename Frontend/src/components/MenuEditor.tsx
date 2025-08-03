@@ -98,7 +98,7 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
-      {/* 🔍 Preview do Menu apenas com títulos */}
+      {/* 🔍 Preview do Menu com logo */}
       <div
         className="border-bottom bg-white w-100 py-4"
         style={{
@@ -106,7 +106,7 @@ const MenuEditor = () => {
           boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
         }}
       >
-        <Menu isAdmin logoUrl="" customTitles={titles} />
+        <Menu isAdmin logoUrl={preview} customTitles={titles} />
       </div>
 
       <div className="p-4">
@@ -120,6 +120,16 @@ const MenuEditor = () => {
             className="form-control"
             onChange={handleFileUpload}
           />
+          {preview && (
+            <div className="mt-3">
+              <p className="fw-semibold">Pré-visualização:</p>
+              <img
+                src={preview}
+                alt="Logo preview"
+                style={{ maxHeight: "100px", objectFit: "contain" }}
+              />
+            </div>
+          )}
         </div>
 
         <h5 className="mb-3">📝 Itens do Menu</h5>
