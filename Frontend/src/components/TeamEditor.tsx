@@ -30,6 +30,7 @@ const TeamEditor = () => {
   });
   const [saving, setSaving] = useState(false);
   const [fileInputs, setFileInputs] = useState<(File | null)[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
 
   useEffect(() => {
     loadTeamData();
@@ -43,6 +44,7 @@ const TeamEditor = () => {
       ]);
       setList(membersRes.data);
       setFileInputs(membersRes.data.map(() => null));
+      setPreviews(membersRes.data.map((m: TeamMember) => fullImageUrl(m.imageUrl)));
       setSection(sectionRes.data);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -55,6 +57,24 @@ const TeamEditor = () => {
       updated[i] = { ...updated[i], [field]: value };
       return updated;
     });
+  };
+
+  const handleImageChange = (i: number, file: File) => {
+    setFileInputs((prev) => {
+      const updated = [...prev];
+      updated[i] = file;
+      return updated;
+    });
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviews((prev) => {
+        const updated = [...prev];
+        updated[i] = reader.result as string;
+        return updated;
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleImageUpload = async (i: number) => {
@@ -79,6 +99,7 @@ const TeamEditor = () => {
   const add = () => {
     setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
     setFileInputs((prev) => [...prev, null]);
+    setPreviews((prev) => [...prev, ""]);
   };
 
   const remove = (i: number) => {
@@ -94,6 +115,7 @@ const TeamEditor = () => {
       }
       setList((prev) => prev.filter((_, idx) => idx !== i));
       setFileInputs((prev) => prev.filter((_, idx) => idx !== i));
+      setPreviews((prev) => prev.filter((_, idx) => idx !== i));
     }
   };
 
@@ -175,13 +197,10 @@ const TeamEditor = () => {
             <input
               type="file"
               className="form-control"
+              accept="image/*"
               onChange={(e) => {
-                const file = e.target.files?.[0] || null;
-                setFileInputs((prev) => {
-                  const updated = [...prev];
-                  updated[i] = file;
-                  return updated;
-                });
+                const file = e.target.files?.[0];
+                if (file) handleImageChange(i, file);
               }}
             />
             <button
@@ -192,17 +211,15 @@ const TeamEditor = () => {
             </button>
           </div>
           <div className="col-md-2">
-            {member.imageUrl && (
-              <img
-                src={fullImageUrl(member.imageUrl)}
-                alt="Preview"
-                style={{ width: 60, height: 60, objectFit: "cover" }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    `${API_BASE}/uploads/fallback.jpg`;
-                }}
-              />
-            )}
+            <img
+              src={previews[i] || fullImageUrl(member.imageUrl)}
+              alt="Preview"
+              style={{ width: 60, height: 60, objectFit: "cover" }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  `${API_BASE}/uploads/fallback.jpg`;
+              }}
+            />
           </div>
           <div className="col-md-1">
             <button className="btn btn-danger" onClick={() => remove(i)}>
