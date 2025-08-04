@@ -1,4 +1,3 @@
-// OurTeamslider.tsx
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
@@ -15,6 +14,7 @@ interface Props {
 
 const OurTeamslider = ({ config }: Props) => {
   const [team, setTeam] = useState<TeamMember[]>([]);
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     getTeamMembers()
@@ -24,24 +24,21 @@ const OurTeamslider = ({ config }: Props) => {
 
   if (!team.length) return null;
 
-  // Função para normalizar a URL da imagem
   const resolveImageUrl = (url: string) => {
-    if (!url) return "/fallback.jpg"; // imagem fallback local
+    if (!url) return `${API_BASE}/uploads/fallback.jpg`;
     if (url.startsWith("http")) return url;
-    return `${import.meta.env.VITE_API_BASE_URL}${url}`;
+    return `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
   };
 
   return (
     <section className="bg-white py-5">
       <div className="container">
-        {/* Cabeçalho da secção */}
         <div className="section-head text-black text-center">
           <h2 className="text-black m-b10">{config.title}</h2>
           <div className="dlab-separator-outer m-b0" />
           <p className="text-muted">{config.description}</p>
         </div>
 
-        {/* Linha decorativa */}
         <div
           className="mx-auto my-3"
           style={{
@@ -51,7 +48,6 @@ const OurTeamslider = ({ config }: Props) => {
           }}
         />
 
-        {/* Slider de membros da equipa */}
         <Swiper
           slidesPerView={4}
           loop
@@ -75,7 +71,7 @@ const OurTeamslider = ({ config }: Props) => {
                   className="card-img-top rounded-top"
                   style={{ height: 300, objectFit: "cover" }}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/fallback.jpg";
+                    (e.target as HTMLImageElement).src = `${API_BASE}/uploads/fallback.jpg`;
                   }}
                 />
                 <div className="card-body">

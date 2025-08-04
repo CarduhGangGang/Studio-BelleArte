@@ -26,7 +26,7 @@ const HomeSliderEditor = () => {
   const fullImageUrl = (url: string) =>
     url.startsWith("http")
       ? url
-      : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
+      : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\/?/, "")}`;
 
   const fetchSlides = async () => {
     setLoading(true);
@@ -80,11 +80,17 @@ const HomeSliderEditor = () => {
     }
 
     try {
-      const uploadedUrl = await uploadImage(file);
+      const res = await uploadImage(file);
+      const imagePath = res?.url;
+      if (!imagePath) {
+        toast.error("❌ Upload falhou");
+        return;
+      }
+
       const updated = [...slides];
-      updated[index].imageUrl = uploadedUrl;
+      updated[index].imageUrl = imagePath;
       setSlides(updated);
-      preloadImages([fullImageUrl(uploadedUrl)]);
+      preloadImages([fullImageUrl(imagePath)]);
       toast.success("Imagem enviada!");
     } catch {
       toast.error("Erro ao enviar imagem.");

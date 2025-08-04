@@ -86,7 +86,7 @@ const TeamEditor = () => {
     const name = member?.name || "este membro";
 
     if (window.confirm(`Tem certeza que deseja remover ${name}?`)) {
-      if (member?.id && typeof member.id === "number") {
+      if (member?.id) {
         axios
           .delete(`/team/members/${member.id}`)
           .then(() => toast.success("Removido"))
@@ -190,17 +190,14 @@ const TeamEditor = () => {
             </button>
           </div>
           <div className="col-md-2">
-            {member.imageUrl && (
-              <img
-                src={fullImageUrl(member.imageUrl)}
-                alt="Preview"
-                style={{ width: 60, height: 60, objectFit: "cover" }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    `${API_BASE}/uploads/fallback.jpg`;
-                }}
-              />
-            )}
+            <img
+              src={fullImageUrl(member.imageUrl)}
+              alt="Preview"
+              style={{ width: 60, height: 60, objectFit: "cover" }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = `${API_BASE}/uploads/fallback.jpg`;
+              }}
+            />
           </div>
           <div className="col-md-1">
             <button className="btn btn-danger" onClick={() => remove(i)}>
