@@ -99,11 +99,14 @@ export const uploadTeamImage = async (file: File): Promise<string> => {
       },
     });
 
-    if (!res.data?.url) {
-      throw new Error("Resposta inválida do servidor durante upload.");
+    const url = res.data?.url;
+    if (!url) {
+      throw new Error("URL não retornada pelo servidor");
     }
 
-    return res.data.url;
+    // Garante que a URL é absoluta
+    const base = import.meta.env.VITE_API_URL;
+    return url.startsWith("http") ? url : `${base}${url}`;
   } catch (error) {
     console.error("❌ Erro no upload da imagem:", error);
     throw error;

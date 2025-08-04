@@ -3,14 +3,14 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-require('dotenv').config(); // 🔹 Garante que o .env seja carregado
+require('dotenv').config();
 
 const basename = path.basename(__filename);
 const db = {};
 
 let sequelize;
 
-// 🔹 Conexão via DATABASE_URL (usada no Render)
+// 🔹 Conexão com base na variável DATABASE_URL (Render ou produção)
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
@@ -21,7 +21,7 @@ if (process.env.DATABASE_URL) {
     },
   });
 } else {
-  // 🔹 Fallback local (útil para desenvolvimento local)
+  // 🔹 Fallback para ambiente local
   sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
@@ -35,39 +35,36 @@ if (process.env.DATABASE_URL) {
   );
 }
 
-// 🔹 Carregar modelos automaticamente
-fs
-  .readdirSync(__dirname)
-  .filter(file =>
+// 🔸 Carrega modelos automaticamente a partir da pasta models
+fs.readdirSync(__dirname)
+  .filter((file) =>
     file.indexOf('.') !== 0 &&
     file !== basename &&
     file.endsWith('.js') &&
     !file.endsWith('.test.js')
   )
-  .forEach(file => {
+  .forEach((file) => {
     const filePath = path.join(__dirname, file);
-    console.log(`🔍 A carregar modelo: ${file}`);
-
     try {
       const modelFn = require(filePath);
-
       if (typeof modelFn !== 'function') {
-        console.warn(`⚠️ ${file} não exporta uma função.`);
+        console.warn(`⚠️ Modelo inválido ignorado: ${file}`);
         return;
       }
-
       const model = modelFn(sequelize, Sequelize.DataTypes);
       db[model.name] = model;
+      console.log(`✅ Modelo carregado: ${model.name}`);
     } catch (err) {
       console.error(`❌ Erro ao carregar modelo ${file}:`, err.message);
     }
   });
 
-// 🔹 Carregar modelos manualmente (caso necessário)
+// 🔸 Carregamento manual adicional (opcional)
 const manualModels = [
   { name: 'Header', path: './Header' },
   { name: 'BannerService', path: './BannerService' },
   { name: 'TeamSection', path: './TeamSection' },
+  { name: 'TeamMember', path: './TeamMember' },
   { name: 'AboutHistory', path: './aboutHistory' },
   { name: 'ContactSectionConfig', path: './contactSectionConfig' },
   { name: 'BookingPage1Config', path: './BookingPage1Config' },
@@ -81,21 +78,21 @@ manualModels.forEach(({ name, path: modelPath }) => {
     try {
       const model = require(modelPath)(sequelize, Sequelize.DataTypes);
       db[name] = model;
-      console.log(`✅ Modelo ${name} carregado manualmente.`);
+      console.log(`✅ Modelo manual carregado: ${name}`);
     } catch (err) {
       console.warn(`⚠️ Falha ao carregar modelo manual ${name}:`, err.message);
     }
   }
 });
 
-// 🔹 Aplicar associações (relacionamentos)
-Object.keys(db).forEach(modelName => {
+// 🔸 Associações (caso existam nos modelos)
+Object.keys(db).forEach((modelName) => {
   if (typeof db[modelName].associate === 'function') {
     db[modelName].associate(db);
   }
 });
 
-// 🔹 Exportar o objeto db com a instância do Sequelize
+// 🔸 Exporta o objeto db
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
