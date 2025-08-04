@@ -5,10 +5,10 @@ const path = require("path");
 const getTeam = async (req, res) => {
   try {
     const members = await TeamMember.findAll();
-    res.json(members);
+    return res.json(members);
   } catch (err) {
     console.error("❌ Erro ao buscar membros:", err);
-    res.status(500).json({ error: "Erro ao buscar membros da equipa." });
+    return res.status(500).json({ error: "Erro ao buscar membros da equipa." });
   }
 };
 
@@ -17,15 +17,15 @@ const createTeam = async (req, res) => {
   try {
     const { name, role, imageUrl } = req.body;
 
-    if (!name || !role || !imageUrl) {
+    if (!name?.trim() || !role?.trim() || !imageUrl?.trim()) {
       return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
     const member = await TeamMember.create({ name, role, imageUrl });
-    res.status(201).json(member);
+    return res.status(201).json(member);
   } catch (err) {
     console.error("❌ Erro ao criar membro:", err);
-    res.status(500).json({ error: "Erro ao criar membro." });
+    return res.status(500).json({ error: "Erro ao criar membro." });
   }
 };
 
@@ -37,10 +37,10 @@ const updateTeam = async (req, res) => {
     if (!member) return res.status(404).json({ error: "Membro não encontrado." });
 
     await member.update(req.body);
-    res.json(member);
+    return res.json(member);
   } catch (err) {
     console.error("❌ Erro ao atualizar membro:", err);
-    res.status(500).json({ error: "Erro ao atualizar membro." });
+    return res.status(500).json({ error: "Erro ao atualizar membro." });
   }
 };
 
@@ -51,10 +51,10 @@ const deleteTeam = async (req, res) => {
     const deleted = await TeamMember.destroy({ where: { id } });
     if (!deleted) return res.status(404).json({ error: "Membro não encontrado." });
 
-    res.json({ success: true, message: "Membro removido com sucesso." });
+    return res.json({ success: true, message: "Membro removido com sucesso." });
   } catch (err) {
     console.error("❌ Erro ao deletar membro:", err);
-    res.status(500).json({ error: "Erro ao deletar membro." });
+    return res.status(500).json({ error: "Erro ao deletar membro." });
   }
 };
 
@@ -63,6 +63,7 @@ const getTeamSection = async (req, res) => {
   try {
     let section = await TeamSection.findOne();
 
+    // Se não existir, criar padrão
     if (!section) {
       section = await TeamSection.create({
         title: "A Nossa Equipa",
@@ -70,10 +71,10 @@ const getTeamSection = async (req, res) => {
       });
     }
 
-    res.json(section);
+    return res.json(section);
   } catch (err) {
     console.error("❌ Erro ao buscar seção:", err);
-    res.status(500).json({ error: "Erro ao buscar configuração da seção." });
+    return res.status(500).json({ error: "Erro ao buscar configuração da seção." });
   }
 };
 
@@ -82,7 +83,7 @@ const updateTeamSection = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    if (!title || !description) {
+    if (!title?.trim() || !description?.trim()) {
       return res.status(400).json({ error: "Título e descrição são obrigatórios." });
     }
 
@@ -94,10 +95,10 @@ const updateTeamSection = async (req, res) => {
       await section.update({ title, description });
     }
 
-    res.json(section);
+    return res.json(section);
   } catch (err) {
     console.error("❌ Erro ao atualizar secção:", err);
-    res.status(500).json({ error: "Erro ao atualizar a secção." });
+    return res.status(500).json({ error: "Erro ao atualizar a secção." });
   }
 };
 
@@ -109,10 +110,10 @@ const uploadImage = async (req, res) => {
     }
 
     const imagePath = `/uploads/${req.file.filename}`;
-    res.json({ url: imagePath });
+    return res.json({ url: imagePath });
   } catch (err) {
     console.error("❌ Erro ao fazer upload:", err);
-    res.status(500).json({ error: "Erro ao fazer upload da imagem." });
+    return res.status(500).json({ error: "Erro ao fazer upload da imagem." });
   }
 };
 
