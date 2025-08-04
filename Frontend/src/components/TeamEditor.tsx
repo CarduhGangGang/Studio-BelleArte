@@ -1,32 +1,35 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "../services/api/api";
-import {
-  TeamMember,
-  getTeamMembers,
-  createTeamMember,
-  updateTeamMember,
-  deleteTeamMember,
-  getTeamSectionConfig,
-  updateTeamSectionConfig,
-  TeamSectionConfig,
-} from "../services/api/team";
+
+interface TeamMember {
+  id?: number;
+  name: string;
+  role: string;
+  imageUrl: string;
+}
+
+interface TeamSectionConfig {
+  title: string;
+  description: string;
+}
 
 const API_BASE = import.meta.env.VITE_API_URL;
-
-const fullImageUrl = (url: string) =>
-  url.startsWith("http") ? url : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
-
-const fallbackFromBackend = () => {
-  const rand = Math.floor(Math.random() * 5) + 1;
-  return `${API_BASE}/uploads/fallbacks/fallback${rand}.jpg`;
+const fullImageUrl = (url: string) => {
+  if (!url) return `${API_BASE}/uploads/fallback.jpg`;
+  return url.startsWith("http")
+    ? url
+    : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
 };
 
 const TeamEditor = () => {
   const [list, setList] = useState<TeamMember[]>([]);
-  const [section, setSection] = useState<TeamSectionConfig>({ title: "", description: "" });
+  const [section, setSection] = useState<TeamSectionConfig>({
+    title: "",
+    description: "",
+  });
   const [saving, setSaving] = useState(false);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [fileInputs, setFileInputs] = useState<(File | null)[]>([]);
 
   useEffect(() => {
     loadTeamData();
@@ -34,13 +37,13 @@ const TeamEditor = () => {
 
   const loadTeamData = async () => {
     try {
-      const [members, sectionData] = await Promise.all([
-        getTeamMembers(),
-        getTeamSectionConfig(),
+      const [membersRes, sectionRes] = await Promise.all([
+        axios.get("/team/members"),
+        axios.get("/team/section"),
       ]);
-      setList(members);
-      setPreviews(members.map((m) => fullImageUrl(m.imageUrl || fallbackFromBackend())));
-      setSection(sectionData);
+      setList(membersRes.data);
+      setFileInputs(membersRes.data.map(() => null));
+      setSection(sectionRes.data);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
     }
@@ -54,12 +57,9 @@ const TeamEditor = () => {
     });
   };
 
-  const handleImageChange = async (i: number, file: File) => {
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("❌ Tipo de imagem inválido.");
-      return;
-    }
+  const handleImageUpload = async (i: number) => {
+    const file = fileInputs[i];
+    if (!file) return;
 
     const formData = new FormData();
     formData.append("image", file);
@@ -68,28 +68,17 @@ const TeamEditor = () => {
       const res = await axios.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       const imagePath = res.data?.url;
-      if (imagePath) {
-        const full = fullImageUrl(imagePath);
-        handleChange(i, "imageUrl", imagePath);
-        setPreviews((prev) => {
-          const updated = [...prev];
-          updated[i] = full;
-          return updated;
-        });
-        toast.success("✅ Imagem enviada com sucesso!");
-      }
-    } catch (err) {
-      console.error("Erro ao fazer upload da imagem:", err);
-      toast.error("❌ Falha ao fazer upload");
+      handleChange(i, "imageUrl", imagePath);
+      toast.success("Imagem carregada com sucesso!");
+    } catch {
+      toast.error("Erro ao enviar imagem");
     }
   };
 
   const add = () => {
-    const fallback = fallbackFromBackend();
-    setList((prev) => [...prev, { name: "", role: "", imageUrl: fallback }]);
-    setPreviews((prev) => [...prev, fallback]);
+    setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
+    setFileInputs((prev) => [...prev, null]);
   };
 
   const remove = (i: number) => {
@@ -98,12 +87,13 @@ const TeamEditor = () => {
 
     if (window.confirm(`Tem certeza que deseja remover ${name}?`)) {
       if (member?.id && typeof member.id === "number") {
-        deleteTeamMember(member.id)
+        axios
+          .delete(`/team/members/${member.id}`)
           .then(() => toast.success("Removido"))
           .catch(() => toast.error("Erro ao remover membro"));
       }
       setList((prev) => prev.filter((_, idx) => idx !== i));
-      setPreviews((prev) => prev.filter((_, idx) => idx !== i));
+      setFileInputs((prev) => prev.filter((_, idx) => idx !== i));
     }
   };
 
@@ -111,35 +101,30 @@ const TeamEditor = () => {
     setSaving(true);
     try {
       for (const member of list) {
-        if (!member.name.trim() || !member.role.trim() || !member.imageUrl.trim()) {
-          toast.warn("⚠️ Todos os campos dos membros são obrigatórios");
+        if (!member.name || !member.role || !member.imageUrl) {
+          toast.warn("Todos os campos dos membros são obrigatórios");
           setSaving(false);
           return;
         }
 
-        if (typeof member.id === "number") {
-          await updateTeamMember(member.id, member);
+        if (member.id) {
+          await axios.put(`/team/members/${member.id}`, member);
         } else {
-          await createTeamMember(member);
+          await axios.post("/team/members", member);
         }
       }
 
       if (!section.title.trim() || !section.description.trim()) {
-        toast.warn("⚠️ Título e descrição da secção são obrigatórios");
+        toast.warn("Título e descrição são obrigatórios");
         setSaving(false);
         return;
       }
 
-      await updateTeamSectionConfig({
-        title: section.title.trim(),
-        description: section.description.trim(),
-      });
-
-      toast.success("✅ Equipa atualizada com sucesso");
+      await axios.put("/team/section", section);
+      toast.success("Equipa atualizada com sucesso");
       await loadTeamData();
-    } catch (err) {
-      console.error("Erro ao guardar equipa:", err);
-      toast.error("❌ Erro ao guardar dados");
+    } catch {
+      toast.error("Erro ao guardar dados");
     } finally {
       setSaving(false);
     }
@@ -149,28 +134,23 @@ const TeamEditor = () => {
     <div className="container py-4">
       <h3 className="mb-4">Edição da Equipa</h3>
 
-      {/* Secção da equipa */}
       <div className="mb-4">
         <input
           className="form-control mb-2"
           placeholder="Título da Secção"
           value={section.title}
-          onChange={(e) =>
-            setSection((prev) => ({ ...prev, title: e.target.value }))
-          }
+          onChange={(e) => setSection({ ...section, title: e.target.value })}
         />
         <textarea
           className="form-control"
           placeholder="Descrição da Secção"
-          rows={3}
           value={section.description}
           onChange={(e) =>
-            setSection((prev) => ({ ...prev, description: e.target.value }))
+            setSection({ ...section, description: e.target.value })
           }
         />
       </div>
 
-      {/* Membros da equipa */}
       {list.map((member, i) => (
         <div key={member.id ?? i} className="row mb-3 align-items-center">
           <div className="col-md-3">
@@ -193,19 +173,31 @@ const TeamEditor = () => {
             <input
               type="file"
               className="form-control"
-              onChange={(e) =>
-                e.target.files?.[0] && handleImageChange(i, e.target.files[0])
-              }
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setFileInputs((prev) => {
+                  const updated = [...prev];
+                  updated[i] = file;
+                  return updated;
+                });
+              }}
             />
+            <button
+              className="btn btn-sm btn-outline-primary mt-1"
+              onClick={() => handleImageUpload(i)}
+            >
+              Enviar imagem
+            </button>
           </div>
           <div className="col-md-2">
-            {previews[i] && (
+            {member.imageUrl && (
               <img
-                src={previews[i]}
+                src={fullImageUrl(member.imageUrl)}
                 alt="Preview"
                 style={{ width: 60, height: 60, objectFit: "cover" }}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = fallbackFromBackend();
+                  (e.target as HTMLImageElement).src =
+                    `${API_BASE}/uploads/fallback.jpg`;
                 }}
               />
             )}
@@ -218,7 +210,6 @@ const TeamEditor = () => {
         </div>
       ))}
 
-      {/* Ações */}
       <div className="mt-3">
         <button className="btn btn-primary me-2" onClick={add}>
           + Adicionar membro
