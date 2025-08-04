@@ -12,6 +12,11 @@ import {
   TeamSectionConfig,
 } from "../services/api/team";
 
+const fallbackFromBackend = () => {
+  const random = Math.floor(Math.random() * 5) + 1; // 1 a 5
+  return `${import.meta.env.VITE_API_BASE_URL}/uploads/fallbacks/fallback${random}.jpg`;
+};
+
 const TeamEditor = () => {
   const [list, setList] = useState<TeamMember[]>([]);
   const [section, setSection] = useState<TeamSectionConfig>({
@@ -32,7 +37,7 @@ const TeamEditor = () => {
         getTeamSectionConfig(),
       ]);
       setList(members);
-      setPreviews(members.map((m) => m.imageUrl || ""));
+      setPreviews(members.map((m) => m.imageUrl || fallbackFromBackend()));
       setSection(sectionData);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -73,8 +78,9 @@ const TeamEditor = () => {
   };
 
   const add = () => {
-    setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
-    setPreviews((prev) => [...prev, ""]);
+    const fallbackImage = fallbackFromBackend();
+    setList((prev) => [...prev, { name: "", role: "", imageUrl: fallbackImage }]);
+    setPreviews((prev) => [...prev, fallbackImage]);
   };
 
   const remove = (i: number) => {
@@ -190,8 +196,8 @@ const TeamEditor = () => {
                 alt="Preview"
                 style={{ width: 60, height: 60, objectFit: "cover" }}
                 onError={(e) => {
-                  const random = Math.floor(Math.random() * 1000);
-                  (e.target as HTMLImageElement).src = `https://source.unsplash.com/60x60/?face,person&sig=${random}`;
+                  const fallback = fallbackFromBackend();
+                  (e.target as HTMLImageElement).src = fallback;
                 }}
               />
             )}
