@@ -19,6 +19,7 @@ const TeamEditor = () => {
     description: "",
   });
   const [saving, setSaving] = useState(false);
+  const [previews, setPreviews] = useState<string[]>([]);
 
   useEffect(() => {
     loadTeamData();
@@ -31,6 +32,7 @@ const TeamEditor = () => {
         getTeamSectionConfig(),
       ]);
       setList(members);
+      setPreviews(members.map((m) => m.imageUrl || ""));
       setSection(sectionData);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -46,21 +48,34 @@ const TeamEditor = () => {
   };
 
   const handleImageChange = async (i: number, file: File) => {
+    // Preview local
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const previewUrl = reader.result as string;
+      setPreviews((prev) => {
+        const updated = [...prev];
+        updated[i] = previewUrl;
+        return updated;
+      });
+    };
+    reader.readAsDataURL(file);
+
     try {
       const url = await uploadTeamImage(file);
       const fullUrl = url.startsWith("http")
         ? url
         : `${import.meta.env.VITE_API_BASE_URL}${url}`;
       handleChange(i, "imageUrl", fullUrl);
-      toast.success("Imagem carregada!");
+      toast.success("✅ Imagem carregada com sucesso!");
     } catch (err) {
-      console.error("❌ Erro ao enviar imagem:", err);
-      toast.error("Erro ao fazer upload da imagem");
+      console.error("Erro ao fazer upload da imagem:", err);
+      toast.error("❌ Falha no upload da imagem");
     }
   };
 
   const add = () => {
     setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
+    setPreviews((prev) => [...prev, ""]);
   };
 
   const remove = (i: number) => {
@@ -74,6 +89,7 @@ const TeamEditor = () => {
           .catch(() => toast.error("Erro ao remover membro"));
       }
       setList((prev) => prev.filter((_, idx) => idx !== i));
+      setPreviews((prev) => prev.filter((_, idx) => idx !== i));
     }
   };
 
@@ -82,7 +98,7 @@ const TeamEditor = () => {
     try {
       for (const member of list) {
         if (!member.name.trim() || !member.role.trim() || !member.imageUrl.trim()) {
-          toast.warn("Todos os campos dos membros são obrigatórios");
+          toast.warn("⚠️ Todos os campos dos membros são obrigatórios");
           setSaving(false);
           return;
         }
@@ -95,7 +111,7 @@ const TeamEditor = () => {
       }
 
       if (!section.title.trim() || !section.description.trim()) {
-        toast.warn("Título e descrição da secção são obrigatórios");
+        toast.warn("⚠️ Título e descrição da secção são obrigatórios");
         setSaving(false);
         return;
       }
@@ -105,11 +121,11 @@ const TeamEditor = () => {
         description: section.description.trim(),
       });
 
-      toast.success("Equipa atualizada com sucesso");
+      toast.success("✅ Equipa atualizada com sucesso");
       await loadTeamData();
     } catch (err) {
-      console.error("❌ Erro ao guardar equipa:", err);
-      toast.error("Erro ao guardar dados");
+      console.error("Erro ao guardar equipa:", err);
+      toast.error("❌ Erro ao guardar dados");
     } finally {
       setSaving(false);
     }
@@ -169,15 +185,15 @@ const TeamEditor = () => {
             />
           </div>
           <div className="col-md-2">
-            {member.imageUrl && (
+            {previews[i] && (
               <img
-                src={member.imageUrl}
+                src={previews[i]}
                 alt="Preview"
                 style={{ width: 60, height: 60, objectFit: "cover" }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://via.placeholder.com/60?text=Erro";
-                }}
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).src =
+                    "https://via.placeholder.com/60?text=Erro")
+                }
               />
             )}
           </div>
