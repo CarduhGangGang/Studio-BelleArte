@@ -134,8 +134,9 @@ const TeamEditor = () => {
     <div className="container py-4">
       <h3 className="mb-4">Edição da Equipa</h3>
 
+      {/* Secção da equipa */}
       <div className="mb-4">
-        <label htmlFor="team-title">Título da Secção</label>
+        <label htmlFor="team-title" className="form-label">Título da Secção</label>
         <input
           id="team-title"
           name="team-title"
@@ -145,21 +146,24 @@ const TeamEditor = () => {
           onChange={(e) => setSection({ ...section, title: e.target.value })}
         />
 
-        <label htmlFor="team-description">Descrição da Secção</label>
+        <label htmlFor="team-description" className="form-label">Descrição da Secção</label>
         <textarea
           id="team-description"
           name="team-description"
           className="form-control"
           placeholder="Descrição da Secção"
           value={section.description}
-          onChange={(e) => setSection({ ...section, description: e.target.value })}
+          onChange={(e) =>
+            setSection({ ...section, description: e.target.value })
+          }
         />
       </div>
 
+      {/* Membros da equipa */}
       {list.map((member, i) => (
         <div key={member.id ?? i} className="row mb-3 align-items-center">
           <div className="col-md-3">
-            <label htmlFor={`name-${i}`}>Nome</label>
+            <label htmlFor={`name-${i}`} className="form-label">Nome</label>
             <input
               id={`name-${i}`}
               name={`name-${i}`}
@@ -171,7 +175,7 @@ const TeamEditor = () => {
           </div>
 
           <div className="col-md-3">
-            <label htmlFor={`role-${i}`}>Função</label>
+            <label htmlFor={`role-${i}`} className="form-label">Função</label>
             <input
               id={`role-${i}`}
               name={`role-${i}`}
@@ -183,7 +187,7 @@ const TeamEditor = () => {
           </div>
 
           <div className="col-md-3">
-            <label htmlFor={`image-${i}`}>Imagem</label>
+            <label htmlFor={`image-${i}`} className="form-label">Imagem</label>
             <input
               id={`image-${i}`}
               name={`image-${i}`}
@@ -233,6 +237,7 @@ const TeamEditor = () => {
         </div>
       ))}
 
+      {/* Ações */}
       <div className="mt-3">
         <button className="btn btn-primary me-2" onClick={add}>
           + Adicionar membro
