@@ -93,7 +93,7 @@ export const uploadTeamImage = async (file: File): Promise<string> => {
   formData.append("image", file);
 
   try {
-    const res = await api.post("/team/upload", formData, {
+    const res = await api.post("/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -104,9 +104,9 @@ export const uploadTeamImage = async (file: File): Promise<string> => {
       throw new Error("URL não retornada pelo servidor");
     }
 
-    // Garante que a URL é absoluta
+    // ✅ Normaliza caminho da imagem (absoluto e confiável)
     const base = import.meta.env.VITE_API_URL;
-    return url.startsWith("http") ? url : `${base}${url}`;
+    return url.startsWith("http") ? url : `${base.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
   } catch (error) {
     console.error("❌ Erro no upload da imagem:", error);
     throw error;
