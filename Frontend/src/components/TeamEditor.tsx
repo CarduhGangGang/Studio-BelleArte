@@ -29,7 +29,6 @@ const TeamEditor = () => {
     description: "",
   });
   const [saving, setSaving] = useState(false);
-  const [fileInputs, setFileInputs] = useState<(File | null)[]>([]);
 
   useEffect(() => {
     loadTeamData();
@@ -42,7 +41,6 @@ const TeamEditor = () => {
         axios.get("/team/section"),
       ]);
       setList(membersRes.data);
-      setFileInputs(membersRes.data.map(() => null));
       setSection(sectionRes.data);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -57,28 +55,8 @@ const TeamEditor = () => {
     });
   };
 
-  const handleImageUpload = async (i: number) => {
-    const file = fileInputs[i];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await axios.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      const imagePath = res.data?.url;
-      handleChange(i, "imageUrl", imagePath);
-      toast.success("Imagem carregada com sucesso!");
-    } catch {
-      toast.error("Erro ao enviar imagem");
-    }
-  };
-
   const add = () => {
     setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
-    setFileInputs((prev) => [...prev, null]);
   };
 
   const remove = (i: number) => {
@@ -93,7 +71,6 @@ const TeamEditor = () => {
           .catch(() => toast.error("Erro ao remover membro"));
       }
       setList((prev) => prev.filter((_, idx) => idx !== i));
-      setFileInputs((prev) => prev.filter((_, idx) => idx !== i));
     }
   };
 
@@ -187,37 +164,19 @@ const TeamEditor = () => {
           </div>
 
           <div className="col-md-3">
-            <label htmlFor={`image-${i}`} className="form-label">Imagem</label>
+            <label htmlFor={`imageUrl-${i}`} className="form-label">URL da Imagem</label>
             <input
-              id={`image-${i}`}
-              name={`image-${i}`}
-              type="file"
+              id={`imageUrl-${i}`}
+              name={`imageUrl-${i}`}
+              placeholder="https://exemplo.com/imagem.jpg"
               className="form-control"
-              onChange={(e) => {
-                const file = e.target.files?.[0] || null;
-                setFileInputs((prev) => {
-                  const updated = [...prev];
-                  updated[i] = file;
-                  return updated;
-                });
-              }}
+              value={member.imageUrl}
+              onChange={(e) => handleChange(i, "imageUrl", e.target.value)}
             />
-            <button
-              className="btn btn-sm btn-outline-primary mt-1"
-              onClick={() => handleImageUpload(i)}
-            >
-              Enviar imagem
-            </button>
           </div>
 
           <div className="col-md-2">
-            {fileInputs[i] ? (
-              <img
-                src={URL.createObjectURL(fileInputs[i]!)}
-                alt="Preview temporário"
-                style={{ width: 60, height: 60, objectFit: "cover" }}
-              />
-            ) : member.imageUrl ? (
+            {member.imageUrl && (
               <img
                 src={fullImageUrl(member.imageUrl)}
                 alt="Preview"
@@ -226,7 +185,7 @@ const TeamEditor = () => {
                   (e.target as HTMLImageElement).src = `${API_BASE}/uploads/fallback.jpg`;
                 }}
               />
-            ) : null}
+            )}
           </div>
 
           <div className="col-md-1">

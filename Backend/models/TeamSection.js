@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "TeamSections", 
+      tableName: "team_sections",
       timestamps: true,
-      underscored: false,         
+      underscored: true,
     }
   );
 
