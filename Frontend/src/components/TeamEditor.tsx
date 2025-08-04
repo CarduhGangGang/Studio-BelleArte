@@ -48,7 +48,6 @@ const TeamEditor = () => {
   };
 
   const handleImageChange = async (i: number, file: File) => {
-    // Preview local
     const reader = new FileReader();
     reader.onloadend = () => {
       const previewUrl = reader.result as string;
@@ -190,10 +189,10 @@ const TeamEditor = () => {
                 src={previews[i]}
                 alt="Preview"
                 style={{ width: 60, height: 60, objectFit: "cover" }}
-                onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    "https://via.placeholder.com/60?text=Erro")
-                }
+                onError={(e) => {
+                  const random = Math.floor(Math.random() * 1000);
+                  (e.target as HTMLImageElement).src = `https://source.unsplash.com/60x60/?face,person&sig=${random}`;
+                }}
               />
             )}
           </div>
