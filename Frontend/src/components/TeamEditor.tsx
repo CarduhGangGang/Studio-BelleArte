@@ -38,7 +38,7 @@ const TeamEditor = () => {
   const loadTeamData = async () => {
     try {
       const [membersRes, sectionRes] = await Promise.all([
-        axios.get("/team/members"),
+        axios.get("/team"),
         axios.get("/team/section"),
       ]);
       setList(membersRes.data);
@@ -86,9 +86,9 @@ const TeamEditor = () => {
     const name = member?.name || "este membro";
 
     if (window.confirm(`Tem certeza que deseja remover ${name}?`)) {
-      if (member?.id) {
+      if (member?.id && typeof member.id === "number") {
         axios
-          .delete(`/team/members/${member.id}`)
+          .delete(`/team/${member.id}`)
           .then(() => toast.success("Removido"))
           .catch(() => toast.error("Erro ao remover membro"));
       }
@@ -108,9 +108,9 @@ const TeamEditor = () => {
         }
 
         if (member.id) {
-          await axios.put(`/team/members/${member.id}`, member);
+          await axios.put(`/team/${member.id}`, member);
         } else {
-          await axios.post("/team/members", member);
+          await axios.post("/team", member);
         }
       }
 
@@ -134,6 +134,7 @@ const TeamEditor = () => {
     <div className="container py-4">
       <h3 className="mb-4">Edição da Equipa</h3>
 
+      {/* Secção da equipa */}
       <div className="mb-4">
         <input
           className="form-control mb-2"
@@ -151,6 +152,7 @@ const TeamEditor = () => {
         />
       </div>
 
+      {/* Membros da equipa */}
       {list.map((member, i) => (
         <div key={member.id ?? i} className="row mb-3 align-items-center">
           <div className="col-md-3">
@@ -190,14 +192,17 @@ const TeamEditor = () => {
             </button>
           </div>
           <div className="col-md-2">
-            <img
-              src={fullImageUrl(member.imageUrl)}
-              alt="Preview"
-              style={{ width: 60, height: 60, objectFit: "cover" }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = `${API_BASE}/uploads/fallback.jpg`;
-              }}
-            />
+            {member.imageUrl && (
+              <img
+                src={fullImageUrl(member.imageUrl)}
+                alt="Preview"
+                style={{ width: 60, height: 60, objectFit: "cover" }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    `${API_BASE}/uploads/fallback.jpg`;
+                }}
+              />
+            )}
           </div>
           <div className="col-md-1">
             <button className="btn btn-danger" onClick={() => remove(i)}>
@@ -207,6 +212,7 @@ const TeamEditor = () => {
         </div>
       ))}
 
+      {/* Ações */}
       <div className="mt-3">
         <button className="btn btn-primary me-2" onClick={add}>
           + Adicionar membro
