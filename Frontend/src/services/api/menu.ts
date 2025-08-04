@@ -14,14 +14,3 @@ export const updateMenuData = async (data: {
   const response = await axios.post(API_URL, data);
   return response.data;
 };
-
-export const uploadLogo = async (file: File) => {
-  const formData = new FormData();
-  formData.append("logo", file);
-
-  const response = await axios.post(`${API_URL}/upload-logo`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-
-  return response.data.url;
-};
