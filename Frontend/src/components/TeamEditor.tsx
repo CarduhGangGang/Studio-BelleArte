@@ -1,28 +1,30 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import axios from "../services/api/api";
 import {
   TeamMember,
   getTeamMembers,
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
-  uploadTeamImage,
   getTeamSectionConfig,
   updateTeamSectionConfig,
   TeamSectionConfig,
 } from "../services/api/team";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
+const fullImageUrl = (url: string) =>
+  url.startsWith("http") ? url : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
+
 const fallbackFromBackend = () => {
-  const random = Math.floor(Math.random() * 5) + 1; // 1 a 5
-  return `${import.meta.env.VITE_API_BASE_URL}/uploads/fallbacks/fallback${random}.jpg`;
+  const rand = Math.floor(Math.random() * 5) + 1;
+  return `${API_BASE}/uploads/fallbacks/fallback${rand}.jpg`;
 };
 
 const TeamEditor = () => {
   const [list, setList] = useState<TeamMember[]>([]);
-  const [section, setSection] = useState<TeamSectionConfig>({
-    title: "",
-    description: "",
-  });
+  const [section, setSection] = useState<TeamSectionConfig>({ title: "", description: "" });
   const [saving, setSaving] = useState(false);
   const [previews, setPreviews] = useState<string[]>([]);
 
@@ -37,7 +39,7 @@ const TeamEditor = () => {
         getTeamSectionConfig(),
       ]);
       setList(members);
-      setPreviews(members.map((m) => m.imageUrl || fallbackFromBackend()));
+      setPreviews(members.map((m) => fullImageUrl(m.imageUrl || fallbackFromBackend())));
       setSection(sectionData);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -46,41 +48,48 @@ const TeamEditor = () => {
 
   const handleChange = (i: number, field: keyof TeamMember, value: string) => {
     setList((prev) => {
-      const newList = [...prev];
-      newList[i] = { ...newList[i], [field]: value };
-      return newList;
+      const updated = [...prev];
+      updated[i] = { ...updated[i], [field]: value };
+      return updated;
     });
   };
 
   const handleImageChange = async (i: number, file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const previewUrl = reader.result as string;
-      setPreviews((prev) => {
-        const updated = [...prev];
-        updated[i] = previewUrl;
-        return updated;
-      });
-    };
-    reader.readAsDataURL(file);
+    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("❌ Tipo de imagem inválido.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
 
     try {
-      const url = await uploadTeamImage(file);
-      const fullUrl = url.startsWith("http")
-        ? url
-        : `${import.meta.env.VITE_API_BASE_URL}${url}`;
-      handleChange(i, "imageUrl", fullUrl);
-      toast.success("✅ Imagem carregada com sucesso!");
+      const res = await axios.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const imagePath = res.data?.url;
+      if (imagePath) {
+        const full = fullImageUrl(imagePath);
+        handleChange(i, "imageUrl", imagePath);
+        setPreviews((prev) => {
+          const updated = [...prev];
+          updated[i] = full;
+          return updated;
+        });
+        toast.success("✅ Imagem enviada com sucesso!");
+      }
     } catch (err) {
       console.error("Erro ao fazer upload da imagem:", err);
-      toast.error("❌ Falha no upload da imagem");
+      toast.error("❌ Falha ao fazer upload");
     }
   };
 
   const add = () => {
-    const fallbackImage = fallbackFromBackend();
-    setList((prev) => [...prev, { name: "", role: "", imageUrl: fallbackImage }]);
-    setPreviews((prev) => [...prev, fallbackImage]);
+    const fallback = fallbackFromBackend();
+    setList((prev) => [...prev, { name: "", role: "", imageUrl: fallback }]);
+    setPreviews((prev) => [...prev, fallback]);
   };
 
   const remove = (i: number) => {
@@ -196,8 +205,7 @@ const TeamEditor = () => {
                 alt="Preview"
                 style={{ width: 60, height: 60, objectFit: "cover" }}
                 onError={(e) => {
-                  const fallback = fallbackFromBackend();
-                  (e.target as HTMLImageElement).src = fallback;
+                  (e.target as HTMLImageElement).src = fallbackFromBackend();
                 }}
               />
             )}
