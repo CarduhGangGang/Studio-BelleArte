@@ -110,7 +110,7 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
-      {/* 🔍 Preview do Menu com logo */}
+      {/* Menu Preview com logo atual */}
       <div
         className="border-bottom bg-white w-100 py-4"
         style={{
@@ -132,16 +132,6 @@ const MenuEditor = () => {
             className="form-control"
             onChange={handleFileUpload}
           />
-          {preview && (
-            <div className="mt-3">
-              <p className="fw-semibold">Pré-visualização:</p>
-              <img
-                src={preview}
-                alt="Logo preview"
-                style={{ maxHeight: "100px", objectFit: "contain" }}
-              />
-            </div>
-          )}
         </div>
 
         <div className="mb-4">
