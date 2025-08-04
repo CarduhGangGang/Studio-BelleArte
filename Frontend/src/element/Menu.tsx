@@ -27,24 +27,23 @@ const Menu = ({
   logoUrl: logoUrlProp,
 }: MenuProps) => {
   const location = useLocation();
+  const path = location.pathname;
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [resolvedLogo, setResolvedLogo] = useState<string>(IMAGE.logoBlack);
   const [header, setHeader] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { logoUrl: contextLogoUrl, setLogoUrl: updateLogoContext } = useLogo();
 
-  const path = location.pathname;
-  const API_BASE = import.meta.env.VITE_API_URL;
+  const { logoUrl: contextLogoUrl, setLogoUrl: updateLogoContext } = useLogo();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // 🔐 Logout automático ao trocar de rota segura → pública
   useEffect(() => {
-    const tipo = localStorage.getItem("tipo") as
-      | "admin"
-      | "studio"
-      | "cliente";
+    const tipo = localStorage.getItem("tipo") as "admin" | "studio" | "cliente";
     const prevPath = sessionStorage.getItem("prevPath");
     const privatePaths = ["/admin", "/studio", "/booking"];
 
@@ -64,10 +63,11 @@ const Menu = ({
     sessionStorage.setItem("prevPath", path);
   }, [path]);
 
+  // 🔁 Carrega o menu (dados do back-end OU props customizadas)
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        if (customTitles) {
+        if (customTitles && customTitles.length) {
           setMenuItems(customTitles);
         } else {
           const data = await getMenuData();
@@ -81,16 +81,18 @@ const Menu = ({
     fetchMenu();
   }, [customTitles]);
 
+  // 🖼️ Define logo (contexto, prop ou padrão)
   useEffect(() => {
-    const selectedLogo = contextLogoUrl || logoUrlProp || IMAGE.logoBlack;
-    const fullLogo = selectedLogo.startsWith("/uploads")
+    const selectedLogo = logoUrlProp || contextLogoUrl || IMAGE.logoBlack;
+    const fullUrl = selectedLogo.startsWith("/uploads")
       ? `${API_BASE}${selectedLogo}`
       : selectedLogo;
 
-    setResolvedLogo(fullLogo);
-    updateLogoContext(fullLogo);
-  }, [contextLogoUrl, logoUrlProp, API_BASE, updateLogoContext]);
+    setResolvedLogo(fullUrl);
+    updateLogoContext(fullUrl); // Atualiza contexto para manter consistência
+  }, [logoUrlProp, contextLogoUrl, API_BASE, updateLogoContext]);
 
+  // 📌 Aplica sombra fixa no header ao rolar
   useEffect(() => {
     const handleScroll = () => setHeader(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
@@ -130,7 +132,7 @@ const Menu = ({
       <div className="main-bar clearfix">
         <div className="container">
           <div className="d-flex flex-wrap justify-content-between align-items-center py-2 position-relative">
-            {/* Logo mobile (esquerda) */}
+            {/* 📱 Logo mobile */}
             {!hideLogo && (
               <div
                 className="logo-header d-lg-none"
@@ -164,7 +166,7 @@ const Menu = ({
               </div>
             )}
 
-            {/* Botão menu mobile */}
+            {/* 🍔 Botão menu mobile */}
             <button
               className="navbar-toggler d-lg-none ms-auto"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -178,7 +180,7 @@ const Menu = ({
               <i className={`fa ${isMenuOpen ? "fa-times" : "fa-bars"}`} />
             </button>
 
-            {/* Logo desktop */}
+            {/* 🖥️ Logo desktop centralizado */}
             {!hideLogo && (
               <div
                 className="d-none d-lg-flex justify-content-center w-100 position-absolute"
@@ -216,7 +218,7 @@ const Menu = ({
             )}
           </div>
 
-          {/* Menu */}
+          {/* 📋 Itens de menu */}
           <div
             className={`header-nav navbar-collapse justify-content-between mt-0.5 ${
               isMenuOpen ? "show d-block" : "d-none d-lg-flex"
