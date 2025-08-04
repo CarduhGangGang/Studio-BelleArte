@@ -41,7 +41,7 @@ const Menu = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // 🔐 Logout automático ao trocar de rota segura → pública
+  // 🔐 Logout automático
   useEffect(() => {
     const tipo = localStorage.getItem("tipo") as "admin" | "studio" | "cliente";
     const prevPath = sessionStorage.getItem("prevPath");
@@ -63,11 +63,11 @@ const Menu = ({
     sessionStorage.setItem("prevPath", path);
   }, [path]);
 
-  // 🔁 Carrega o menu (dados do back-end OU props customizadas)
+  // 🔁 Carrega menu
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        if (customTitles && customTitles.length) {
+        if (customTitles?.length) {
           setMenuItems(customTitles);
         } else {
           const data = await getMenuData();
@@ -81,18 +81,18 @@ const Menu = ({
     fetchMenu();
   }, [customTitles]);
 
-  // 🖼️ Define logo (contexto, prop ou padrão)
+  // 🖼️ Define logo por prioridade: prop → contexto → default
   useEffect(() => {
-    const selectedLogo = logoUrlProp || contextLogoUrl || IMAGE.logoBlack;
-    const fullUrl = selectedLogo.startsWith("/uploads")
-      ? `${API_BASE}${selectedLogo}`
-      : selectedLogo;
+    const selected = logoUrlProp || contextLogoUrl || IMAGE.logoBlack;
+    const finalLogo = selected.startsWith("/uploads")
+      ? `${API_BASE}${selected}`
+      : selected;
 
-    setResolvedLogo(fullUrl);
-    updateLogoContext(fullUrl); // Atualiza contexto para manter consistência
+    setResolvedLogo(finalLogo);
+    updateLogoContext(finalLogo);
   }, [logoUrlProp, contextLogoUrl, API_BASE, updateLogoContext]);
 
-  // 📌 Aplica sombra fixa no header ao rolar
+  // 🎯 Detecção de scroll
   useEffect(() => {
     const handleScroll = () => setHeader(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
@@ -146,7 +146,7 @@ const Menu = ({
                   <div>
                     <img
                       src={resolvedLogo}
-                      alt="Studio BelleArte"
+                      alt="Logo"
                       style={{
                         height: "60px",
                         objectFit: "contain",
@@ -158,7 +158,7 @@ const Menu = ({
                   <Link to="/" className="d-block">
                     <img
                       src={resolvedLogo}
-                      alt="Studio BelleArte"
+                      alt="Logo"
                       style={{ height: "60px", objectFit: "contain" }}
                     />
                   </Link>
@@ -166,7 +166,7 @@ const Menu = ({
               </div>
             )}
 
-            {/* 🍔 Botão menu mobile */}
+            {/* ☰ Botão menu mobile */}
             <button
               className="navbar-toggler d-lg-none ms-auto"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -180,7 +180,7 @@ const Menu = ({
               <i className={`fa ${isMenuOpen ? "fa-times" : "fa-bars"}`} />
             </button>
 
-            {/* 🖥️ Logo desktop centralizado */}
+            {/* 🖥️ Logo desktop */}
             {!hideLogo && (
               <div
                 className="d-none d-lg-flex justify-content-center w-100 position-absolute"
@@ -190,7 +190,7 @@ const Menu = ({
                   <div>
                     <img
                       src={resolvedLogo}
-                      alt="Studio BelleArte"
+                      alt="Logo"
                       style={{
                         height: "70px",
                         objectFit: "contain",
@@ -204,7 +204,7 @@ const Menu = ({
                   <Link to="/" className="d-block">
                     <img
                       src={resolvedLogo}
-                      alt="Studio BelleArte"
+                      alt="Logo"
                       style={{
                         height: "70px",
                         objectFit: "contain",
@@ -218,7 +218,7 @@ const Menu = ({
             )}
           </div>
 
-          {/* 📋 Itens de menu */}
+          {/* 📋 Menu items */}
           <div
             className={`header-nav navbar-collapse justify-content-between mt-0.5 ${
               isMenuOpen ? "show d-block" : "d-none d-lg-flex"
@@ -227,7 +227,6 @@ const Menu = ({
             <ul className="nav navbar-nav flex-column flex-lg-row align-items-start align-items-lg-center">
               {menuItems.slice(0, 3).map(renderMenuItem)}
             </ul>
-
             <ul className="nav navbar-nav flex-column flex-lg-row align-items-start align-items-lg-center">
               {menuItems.slice(3).map(renderMenuItem)}
             </ul>
