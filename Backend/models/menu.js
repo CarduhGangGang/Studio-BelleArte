@@ -9,9 +9,9 @@ const defaultMenuData = {
     { key: "home", label: "Home", link: "/", visible: true },
     { key: "about", label: "Sobre", link: "/about-us", visible: true },
     { key: "services", label: "Serviços", link: "/services", visible: true },
-    { key: "register", label: "Registar", link: "/registor", visible: true },
+    { key: "register", label: "Registar", link: "/registar", visible: true },
     { key: "login", label: "Login", link: "/login", visible: true },
-    { key: "contact", label: "Contactos", link: "/contect-us", visible: true },
+    { key: "contact", label: "Contactos", link: "/contact-us", visible: true }
   ],
 };
 

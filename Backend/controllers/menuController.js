@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { loadMenuData, saveMenuData } = require("../models/menuModel");
+const { loadMenuData, saveMenuData } = require("../models/menu");
 
 let menuData = loadMenuData();
 
