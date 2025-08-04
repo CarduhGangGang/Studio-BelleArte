@@ -30,7 +30,6 @@ const TeamEditor = () => {
   });
   const [saving, setSaving] = useState(false);
   const [fileInputs, setFileInputs] = useState<(File | null)[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
 
   useEffect(() => {
     loadTeamData();
@@ -44,7 +43,6 @@ const TeamEditor = () => {
       ]);
       setList(membersRes.data);
       setFileInputs(membersRes.data.map(() => null));
-      setPreviews(membersRes.data.map((m: TeamMember) => fullImageUrl(m.imageUrl)));
       setSection(sectionRes.data);
     } catch (err) {
       toast.error("Erro ao carregar dados da equipa");
@@ -57,24 +55,6 @@ const TeamEditor = () => {
       updated[i] = { ...updated[i], [field]: value };
       return updated;
     });
-  };
-
-  const handleImageChange = (i: number, file: File) => {
-    setFileInputs((prev) => {
-      const updated = [...prev];
-      updated[i] = file;
-      return updated;
-    });
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviews((prev) => {
-        const updated = [...prev];
-        updated[i] = reader.result as string;
-        return updated;
-      });
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleImageUpload = async (i: number) => {
@@ -99,7 +79,6 @@ const TeamEditor = () => {
   const add = () => {
     setList((prev) => [...prev, { name: "", role: "", imageUrl: "" }]);
     setFileInputs((prev) => [...prev, null]);
-    setPreviews((prev) => [...prev, ""]);
   };
 
   const remove = (i: number) => {
@@ -115,7 +94,6 @@ const TeamEditor = () => {
       }
       setList((prev) => prev.filter((_, idx) => idx !== i));
       setFileInputs((prev) => prev.filter((_, idx) => idx !== i));
-      setPreviews((prev) => prev.filter((_, idx) => idx !== i));
     }
   };
 
@@ -156,51 +134,68 @@ const TeamEditor = () => {
     <div className="container py-4">
       <h3 className="mb-4">Edição da Equipa</h3>
 
-      {/* Secção da equipa */}
       <div className="mb-4">
+        <label htmlFor="team-title">Título da Secção</label>
         <input
+          id="team-title"
+          name="team-title"
           className="form-control mb-2"
           placeholder="Título da Secção"
           value={section.title}
           onChange={(e) => setSection({ ...section, title: e.target.value })}
         />
+
+        <label htmlFor="team-description">Descrição da Secção</label>
         <textarea
+          id="team-description"
+          name="team-description"
           className="form-control"
           placeholder="Descrição da Secção"
           value={section.description}
-          onChange={(e) =>
-            setSection({ ...section, description: e.target.value })
-          }
+          onChange={(e) => setSection({ ...section, description: e.target.value })}
         />
       </div>
 
-      {/* Membros da equipa */}
       {list.map((member, i) => (
         <div key={member.id ?? i} className="row mb-3 align-items-center">
           <div className="col-md-3">
+            <label htmlFor={`name-${i}`}>Nome</label>
             <input
+              id={`name-${i}`}
+              name={`name-${i}`}
               placeholder="Nome"
               className="form-control"
               value={member.name}
               onChange={(e) => handleChange(i, "name", e.target.value)}
             />
           </div>
+
           <div className="col-md-3">
+            <label htmlFor={`role-${i}`}>Função</label>
             <input
+              id={`role-${i}`}
+              name={`role-${i}`}
               placeholder="Função"
               className="form-control"
               value={member.role}
               onChange={(e) => handleChange(i, "role", e.target.value)}
             />
           </div>
+
           <div className="col-md-3">
+            <label htmlFor={`image-${i}`}>Imagem</label>
             <input
+              id={`image-${i}`}
+              name={`image-${i}`}
               type="file"
               className="form-control"
-              accept="image/*"
               onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleImageChange(i, file);
+                const file = e.target.files?.[0] || null;
+                setFileInputs((prev) => {
+                  const updated = [...prev];
+                  updated[i] = file;
+                  return updated;
+                });
               }}
             />
             <button
@@ -210,17 +205,26 @@ const TeamEditor = () => {
               Enviar imagem
             </button>
           </div>
+
           <div className="col-md-2">
-            <img
-              src={previews[i] || fullImageUrl(member.imageUrl)}
-              alt="Preview"
-              style={{ width: 60, height: 60, objectFit: "cover" }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  `${API_BASE}/uploads/fallback.jpg`;
-              }}
-            />
+            {fileInputs[i] ? (
+              <img
+                src={URL.createObjectURL(fileInputs[i]!)}
+                alt="Preview temporário"
+                style={{ width: 60, height: 60, objectFit: "cover" }}
+              />
+            ) : member.imageUrl ? (
+              <img
+                src={fullImageUrl(member.imageUrl)}
+                alt="Preview"
+                style={{ width: 60, height: 60, objectFit: "cover" }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `${API_BASE}/uploads/fallback.jpg`;
+                }}
+              />
+            ) : null}
           </div>
+
           <div className="col-md-1">
             <button className="btn btn-danger" onClick={() => remove(i)}>
               ✕
@@ -229,7 +233,6 @@ const TeamEditor = () => {
         </div>
       ))}
 
-      {/* Ações */}
       <div className="mt-3">
         <button className="btn btn-primary me-2" onClick={add}>
           + Adicionar membro

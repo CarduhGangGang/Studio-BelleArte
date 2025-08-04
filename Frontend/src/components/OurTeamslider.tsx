@@ -19,7 +19,7 @@ const OurTeamslider = ({ config }: Props) => {
   useEffect(() => {
     getTeamMembers()
       .then(setTeam)
-      .catch(() => console.error("Erro ao carregar equipa"));
+      .catch(() => console.error("❌ Erro ao carregar equipa"));
   }, []);
 
   if (!team.length) return null;
@@ -33,12 +33,14 @@ const OurTeamslider = ({ config }: Props) => {
   return (
     <section className="bg-white py-5">
       <div className="container">
+        {/* Cabeçalho da secção */}
         <div className="section-head text-black text-center">
           <h2 className="text-black m-b10">{config.title}</h2>
           <div className="dlab-separator-outer m-b0" />
           <p className="text-muted">{config.description}</p>
         </div>
 
+        {/* Linha decorativa */}
         <div
           className="mx-auto my-3"
           style={{
@@ -48,6 +50,7 @@ const OurTeamslider = ({ config }: Props) => {
           }}
         />
 
+        {/* Slider de membros */}
         <Swiper
           slidesPerView={4}
           loop
@@ -67,7 +70,7 @@ const OurTeamslider = ({ config }: Props) => {
               <div className="card h-100 text-center shadow-sm border-0">
                 <img
                   src={resolveImageUrl(member.imageUrl)}
-                  alt={member.name}
+                  alt={member.name || "Membro da Equipa"}
                   className="card-img-top rounded-top"
                   style={{ height: 300, objectFit: "cover" }}
                   onError={(e) => {
