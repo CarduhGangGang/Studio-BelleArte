@@ -17,7 +17,9 @@ if (process.env.DATABASE_URL) {
     protocol: "postgres",
     logging: false,
     dialectOptions: {
-      ssl: process.env.RENDER ? { require: true, rejectUnauthorized: false } : false,
+      ssl: process.env.RENDER
+        ? { require: true, rejectUnauthorized: false }
+        : false,
     },
   });
 } else {
@@ -34,7 +36,7 @@ if (process.env.DATABASE_URL) {
   );
 }
 
-// 🔸 Carrega modelos automaticamente da pasta atual (exceto este ficheiro)
+// 🔸 Carregamento automático de todos os modelos
 fs.readdirSync(__dirname)
   .filter(
     (file) =>
@@ -55,44 +57,44 @@ fs.readdirSync(__dirname)
       db[model.name] = model;
       console.log(`✅ Modelo carregado: ${model.name}`);
     } catch (err) {
-      console.error(`❌ Erro ao carregar modelo ${file}:`, err.message);
+      console.error(`❌ Erro ao carregar modelo ${file}: ${err.message}`);
     }
   });
 
-// 🔸 Carregamento manual adicional (caso falhe o automático)
+// 🔸 Modelos manuais que não carregaram automaticamente
 const manualModels = [
-  { name: "Header", path: "./Header" },
-  { name: "BannerService", path: "./BannerService" },
-  { name: "TeamSection", path: "./TeamSection" },
-  { name: "TeamMember", path: "./TeamMember" },
-  { name: "AboutHistory", path: "./aboutHistory" },
-  { name: "ContactSectionConfig", path: "./contactSectionConfig" },
-  { name: "BookingPage1Config", path: "./BookingPage1Config" },
-  { name: "BookingPage2Config", path: "./BookingPage2Config" },
-  { name: "BookingPage3Config", path: "./BookingPage3Config" },
-  { name: "Footer", path: "./Footer" },
+  "Header",
+  "BannerService",
+  "TeamSection",
+  "TeamMember",
+  "AboutHistory",
+  "ContactSectionConfig",
+  "BookingPage1Config",
+  "BookingPage2Config",
+  "BookingPage3Config",
+  "Footer",
 ];
 
-manualModels.forEach(({ name, path: modelPath }) => {
+manualModels.forEach((name) => {
   if (!db[name]) {
     try {
-      const model = require(modelPath)(sequelize, Sequelize.DataTypes);
+      const model = require(`./${name}`)(sequelize, Sequelize.DataTypes);
       db[name] = model;
       console.log(`✅ Modelo manual carregado: ${name}`);
     } catch (err) {
-      console.warn(`⚠️ Falha ao carregar modelo manual ${name}:`, err.message);
+      console.warn(`⚠️ Falha ao carregar modelo manual ${name}: ${err.message}`);
     }
   }
 });
 
-// 🔸 Configura associações (caso existam nos modelos)
+// 🔸 Executar associações se existirem
 Object.keys(db).forEach((modelName) => {
   if (typeof db[modelName].associate === "function") {
     db[modelName].associate(db);
   }
 });
 
-// 🔸 Exporta o objeto db com a instância do Sequelize
+// 🔸 Exportar DB + conexão Sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

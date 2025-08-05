@@ -1,43 +1,24 @@
-const fs = require("fs");
-const path = require("path");
-const { loadMenuData, saveMenuData } = require("../models/menu");
-
-let menuData = loadMenuData();
+const { loadMenuData, saveMenuData } = require("../models/menuModel");
 
 // GET /api/menu
-const getMenu = (req, res) => {
-  return res.json(menuData);
+exports.getMenu = (req, res) => {
+  const menu = loadMenuData();
+  res.json(menu);
 };
 
 // POST /api/menu
-const updateMenu = (req, res) => {
-  const { logoUrl, titles } = req.body;
+exports.updateMenu = (req, res) => {
+  try {
+    const { logoUrl, titles } = req.body;
 
-  if (logoUrl) menuData.logoUrl = logoUrl;
-  if (Array.isArray(titles)) menuData.titles = titles;
+    if (!logoUrl || !Array.isArray(titles)) {
+      return res.status(400).json({ error: "Dados inválidos" });
+    }
 
-  saveMenuData(menuData);
-  return res.json({ success: true, data: menuData });
-};
-
-// POST /api/menu/upload-logo
-const uploadLogo = (req, res) => {
-  const filePath = `/uploads/${req.file.filename}`;
-
-  if (menuData.logoUrl && menuData.logoUrl !== "/uploads/favicon2.png") {
-    const oldPath = path.join(__dirname, "../public", menuData.logoUrl);
-    fs.unlink(oldPath, (err) => {
-      if (err) console.warn("⚠️ Falha ao apagar imagem anterior:", err.message);
-    });
+    saveMenuData({ logoUrl, titles });
+    res.json({ message: "Menu atualizado com sucesso." });
+  } catch (err) {
+    console.error("Erro ao salvar menu:", err);
+    res.status(500).json({ error: "Erro ao salvar menu." });
   }
-
-  menuData.logoUrl = filePath;
-  saveMenuData(menuData);
-  return res.json({ success: true, url: filePath });
-};
-
-module.exports = {
-  getMenu,
-  updateMenu,
-  uploadLogo,
 };
