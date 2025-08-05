@@ -3,8 +3,9 @@ const path = require("path");
 
 const menuFilePath = path.join(__dirname, "../data/menu.json");
 
+// ✅ Menu default com logo por URL
 const defaultMenuData = {
-  logoUrl: "/uploads/favicon2.png",
+  logoUrl: "https://exemplo.com/logo-padrao.png", // ← altere para seu logo padrão real
   titles: [
     { key: "home", label: "Home", link: "/", visible: true },
     { key: "about", label: "Sobre", link: "/about-us", visible: true },
@@ -25,6 +26,16 @@ const loadMenuData = () => {
 };
 
 const saveMenuData = (data) => {
+  // Opcional: validar se logoUrl é uma string de URL
+  if (typeof data.logoUrl !== "string") {
+    throw new Error("logoUrl deve ser uma string de URL");
+  }
+
+  // Opcional: garantir titles bem formatado
+  if (!Array.isArray(data.titles)) {
+    throw new Error("titles deve ser um array");
+  }
+
   fs.writeFileSync(menuFilePath, JSON.stringify(data, null, 2), "utf-8");
 };
 
