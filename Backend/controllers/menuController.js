@@ -22,13 +22,26 @@ const updateMenu = async (req, res) => {
 
   try {
     if (logoUrl) {
-      await Logo.create({ url: logoUrl });
+      const lastLogo = await Logo.findOne({ order: [["id", "DESC"]] });
+      if (!lastLogo || lastLogo.url !== logoUrl) {
+        await Logo.create({ url: logoUrl });
+      }
     }
 
-    if (Array.isArray(titles)) {
-      await MenuItem.destroy({ where: {} }); // limpa tudo
-      await MenuItem.bulkCreate(titles);
+    if (!Array.isArray(titles)) {
+      return res.status(400).json({ error: "Lista de títulos inválida" });
     }
+
+    await MenuItem.destroy({ where: {} });
+
+    const cleanTitles = titles.map(({ key, label, link, visible }) => ({
+      key,
+      label,
+      link,
+      visible,
+    }));
+
+    await MenuItem.bulkCreate(cleanTitles);
 
     return res.json({ success: true });
   } catch (err) {
