@@ -52,9 +52,9 @@ const MenuEditor = () => {
   };
 
   const handleSaveChanges = async () => {
-    const hasEmpty = titles.some((item) => item.label.trim() === "");
+    const hasEmpty = titles.some((item) => item.label.trim() === "" || item.link.trim() === "");
     if (hasEmpty) {
-      toast.error("⚠️ Todos os títulos devem estar preenchidos.");
+      toast.error("⚠️ Todos os campos devem estar preenchidos.");
       return;
     }
 
@@ -76,9 +76,19 @@ const MenuEditor = () => {
     toast.info("↩️ Menu restaurado ao estado inicial.");
   };
 
+  const addNewItem = () => {
+    const newKey = `item-${Date.now()}`;
+    setTitles([...titles, { key: newKey, label: "", link: "", visible: true }]);
+  };
+
+  const removeItem = (index: number) => {
+    const updated = [...titles];
+    updated.splice(index, 1);
+    setTitles(updated);
+  };
+
   const hasLogoChanged = preview !== originalLogo;
-  const hasTitlesChanged =
-    JSON.stringify(titles) !== JSON.stringify(originalTitles);
+  const hasTitlesChanged = JSON.stringify(titles) !== JSON.stringify(originalTitles);
   const hasAnyChanges = hasLogoChanged || hasTitlesChanged;
 
   return (
@@ -89,13 +99,9 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
-      {/* Menu Preview com logo atual */}
       <div
         className="border-bottom bg-white w-100 py-4"
-        style={{
-          minHeight: "80px",
-          boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
-        }}
+        style={{ minHeight: "80px", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}
       >
         <Menu isAdmin logoUrl={preview} customTitles={titles} />
       </div>
@@ -129,10 +135,11 @@ const MenuEditor = () => {
 
         {titles.map((item, index) => (
           <div className="row align-items-center mb-3" key={item.key}>
-            <div className="col-md-4">
+            <div className="col-md-3">
               <input
                 type="text"
                 className={`form-control ${!item.label.trim() ? "is-invalid" : ""}`}
+                placeholder="Texto"
                 value={item.label}
                 onChange={(e) => {
                   const updated = [...titles];
@@ -141,7 +148,19 @@ const MenuEditor = () => {
                 }}
               />
             </div>
-
+            <div className="col-md-4">
+              <input
+                type="text"
+                className={`form-control ${!item.link.trim() ? "is-invalid" : ""}`}
+                placeholder="/url"
+                value={item.link}
+                onChange={(e) => {
+                  const updated = [...titles];
+                  updated[index].link = e.target.value;
+                  setTitles(updated);
+                }}
+              />
+            </div>
             <div className="col-md-2">
               <input
                 className="form-check-input"
@@ -152,42 +171,38 @@ const MenuEditor = () => {
                   updated[index].visible = !updated[index].visible;
                   setTitles(updated);
                 }}
-              />{" "}
-              Visível
+              /> Visível
             </div>
-
             <div className="col-md-3 d-flex gap-2">
               <button
                 className="btn btn-outline-secondary"
                 disabled={index === 0}
                 onClick={() => {
                   const updated = [...titles];
-                  [updated[index - 1], updated[index]] = [
-                    updated[index],
-                    updated[index - 1],
-                  ];
+                  [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
                   setTitles(updated);
                 }}
-              >
-                ⬆️
-              </button>
+              >⬆️</button>
               <button
                 className="btn btn-outline-secondary"
                 disabled={index === titles.length - 1}
                 onClick={() => {
                   const updated = [...titles];
-                  [updated[index + 1], updated[index]] = [
-                    updated[index],
-                    updated[index + 1],
-                  ];
+                  [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
                   setTitles(updated);
                 }}
-              >
-                ⬇️
-              </button>
+              >⬇️</button>
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => removeItem(index)}
+              >🗑️</button>
             </div>
           </div>
         ))}
+
+        <button className="btn btn-sm btn-secondary mb-4" onClick={addNewItem}>
+          ➕ Adicionar item ao menu
+        </button>
 
         <div className="d-flex gap-3 mt-4 flex-wrap">
           <button
