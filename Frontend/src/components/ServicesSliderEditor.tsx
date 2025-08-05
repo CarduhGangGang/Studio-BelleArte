@@ -114,7 +114,7 @@ const ServicesSliderEditor = () => {
   };
 
   const getImage = (url?: string) =>
-    url && url.startsWith("http")
+    url?.startsWith("http")
       ? url
       : url
       ? `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`
