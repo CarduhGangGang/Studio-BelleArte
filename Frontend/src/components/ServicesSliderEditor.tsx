@@ -14,7 +14,6 @@ const initialForm: ServicoData = {
   descricao: "",
   preco: 0,
   duracao: 0,
-  image: null,
   imageUrl: "",
 };
 
@@ -53,23 +52,6 @@ const ServicesSliderEditor = () => {
     setForm((prev) => ({ ...prev, [name]: parsed }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Verifica tipo da imagem
-    if (!file.type.startsWith("image/")) {
-      alert("Por favor selecione um ficheiro de imagem válido.");
-      return;
-    }
-
-    setForm((prev) => ({
-      ...prev,
-      image: file,
-      imageUrl: URL.createObjectURL(file),
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -99,7 +81,6 @@ const ServicesSliderEditor = () => {
       descricao: servico.descricao || "",
       preco: servico.preco,
       duracao: servico.duracao,
-      image: null,
       imageUrl: servico.imageUrl || "",
     });
     setEditId(servico.id!);
@@ -133,7 +114,11 @@ const ServicesSliderEditor = () => {
   };
 
   const getImage = (url?: string) =>
-    url?.startsWith("http") ? url : `${API_BASE.replace(/\/$/, "")}/${url?.replace(/^\//, "")}`;
+    url && url.startsWith("http")
+      ? url
+      : url
+      ? `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\//, "")}`
+      : "";
 
   return (
     <div className="container py-5">
@@ -231,28 +216,23 @@ const ServicesSliderEditor = () => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Imagem</label>
+          <label className="form-label">URL da Imagem</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            name="imageUrl"
+            value={form.imageUrl}
+            onChange={handleInputChange}
             className="form-control"
+            placeholder="https://exemplo.com/imagem.jpg"
           />
           {form.imageUrl && (
-            <div className="mt-2 d-inline-block position-relative">
+            <div className="mt-2">
               <img
                 src={getImage(form.imageUrl)}
-                alt="Preview"
+                alt="Pré-visualização"
                 className="rounded border"
                 style={{ width: "150px", height: "100px", objectFit: "cover" }}
               />
-              <button
-                type="button"
-                className="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                onClick={() => setForm((prev) => ({ ...prev, image: null, imageUrl: "" }))}
-              >
-                ×
-              </button>
             </div>
           )}
         </div>
@@ -291,8 +271,8 @@ const ServicesSliderEditor = () => {
                 <h5 className="card-title">{servico.nome}</h5>
                 <p className="card-text text-muted">{servico.descricao}</p>
                 <p className="card-text">
-                <strong>Duração:</strong> {servico.duracao} min <br />
-                <strong>Preço:</strong> €{!isNaN(Number(servico.preco)) ? Number(servico.preco).toFixed(2) : "0.00"}
+                  <strong>Duração:</strong> {servico.duracao} min <br />
+                  <strong>Preço:</strong> €{!isNaN(Number(servico.preco)) ? Number(servico.preco).toFixed(2) : "0.00"}
                 </p>
                 <div className="d-flex gap-2">
                   <button className="btn btn-sm btn-warning" onClick={() => handleEdit(servico)}>
