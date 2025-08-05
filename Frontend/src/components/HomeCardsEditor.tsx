@@ -8,6 +8,7 @@ const HomeCardsEditor = () => {
     title: string;
     subtitle: string;
     author: string;
+    imageUrl?: string;
   }>(null);
 
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ const HomeCardsEditor = () => {
       .catch(() => toast.error("Erro ao carregar a secção de citação"));
   }, []);
 
-  const handleChange = (field: "title" | "subtitle" | "author", value: string) => {
+  const handleChange = (field: keyof typeof form, value: string) => {
     if (!form) return;
     setForm({ ...form, [field]: value });
   };
@@ -53,7 +54,13 @@ const HomeCardsEditor = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <i className="flaticon-barber text-3xl mb-2 d-block"></i>
+        {form.imageUrl && (
+          <img
+            src={form.imageUrl}
+            alt="Citação"
+            style={{ maxHeight: "120px", objectFit: "contain", marginBottom: "10px" }}
+          />
+        )}
         <h2 className="text-xl fw-bold">{form.title || "Título da citação..."}</h2>
         <p className="mt-2 text-sm">
           {form.subtitle || "Subtítulo aqui..."} — <em>{form.author || "Autor..."}</em>
@@ -61,6 +68,17 @@ const HomeCardsEditor = () => {
       </motion.div>
 
       {message && <div className="alert alert-info py-2 mb-3">{message}</div>}
+
+      <div className="mb-3">
+        <label className="form-label">🖼️ URL da imagem (opcional)</label>
+        <input
+          type="text"
+          className="form-control"
+          value={form.imageUrl || ""}
+          onChange={(e) => handleChange("imageUrl", e.target.value)}
+          placeholder="https://example.com/image.png"
+        />
+      </div>
 
       <div className="mb-3">
         <label className="form-label">📝 Título</label>

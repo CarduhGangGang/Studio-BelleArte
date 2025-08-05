@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const MenuItem = sequelize.define("MenuItem", {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     key: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -17,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+  }, {
+    tableName: "MenuItems", // garante nome consistente da tabela
+    timestamps: false,      // desativa createdAt/updatedAt se não fores usar
   });
 
   return MenuItem;
