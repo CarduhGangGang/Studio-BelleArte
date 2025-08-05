@@ -164,8 +164,9 @@ const HomeSliderEditor = () => {
                   </div>
                 ))}
 
+                {/* URL da Imagem - IGUAL AO CAMPO DE LOGO NO FOOTER */}
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">URL da Imagem</label>
+                  <label className="form-label">URL da Imagem</label>
                   <input
                     type="text"
                     className="form-control"
