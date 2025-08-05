@@ -75,9 +75,6 @@ const manualModels = [
   "Footer",
   "MenuItem",
   "Logo",
-  "ServiceList",
-  "Service",
-  "ServiceSectionConfig",
   "Servico",
 ];
 
