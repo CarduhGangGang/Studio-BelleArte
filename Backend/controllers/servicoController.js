@@ -4,7 +4,9 @@ const db = require("../models");
 // 🔹 Listar todos os serviços
 exports.servico_list = async (req, res) => {
   try {
-    const servicos = await db.Servico.findAll({ order: [["createdAt", "DESC"]] });
+    const servicos = await db.Servico.findAll({
+      order: [["createdAt", "DESC"]],
+    });
     res.json(servicos);
   } catch (err) {
     console.error("Erro ao listar serviços:", err);
@@ -12,11 +14,13 @@ exports.servico_list = async (req, res) => {
   }
 };
 
-// 🔹 Detalhes de um serviço
+// 🔹 Obter detalhes de um serviço
 exports.servico_detail = async (req, res) => {
   try {
     const servico = await db.Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).json({ mensagem: "Serviço não encontrado" });
+    if (!servico) {
+      return res.status(404).json({ mensagem: "Serviço não encontrado." });
+    }
     res.json(servico);
   } catch (err) {
     console.error("Erro ao buscar serviço:", err);
@@ -24,31 +28,42 @@ exports.servico_detail = async (req, res) => {
   }
 };
 
-// 🔹 Criar novo serviço (usando URL de imagem)
+// 🔹 Criar novo serviço (com URL de imagem)
 exports.servico_create = async (req, res) => {
   try {
     const { nome, duracao, preco, descricao, imageUrl } = req.body;
 
     if (!nome || !duracao || !preco) {
-      return res.status(400).json({ mensagem: "Campos obrigatórios: nome, duração e preço." });
+      return res.status(400).json({
+        mensagem: "Campos obrigatórios: nome, duração e preço.",
+      });
     }
 
-    const novo = await db.Servico.create({ nome, duracao, preco, descricao, imageUrl });
-    res.status(201).json(novo);
+    const novoServico = await db.Servico.create({
+      nome,
+      duracao,
+      preco,
+      descricao,
+      imageUrl,
+    });
+
+    res.status(201).json(novoServico);
   } catch (err) {
     console.error("Erro ao criar serviço:", err);
     res.status(500).json({ mensagem: "Erro ao criar serviço." });
   }
 };
 
-// 🔹 Atualizar serviço (usando URL de imagem)
+// 🔹 Atualizar serviço existente (com URL de imagem)
 exports.servico_update = async (req, res) => {
   try {
     const { nome, duracao, preco, descricao, imageUrl } = req.body;
     const id = req.params.id;
 
     const servico = await db.Servico.findByPk(id);
-    if (!servico) return res.status(404).json({ mensagem: "Serviço não encontrado." });
+    if (!servico) {
+      return res.status(404).json({ mensagem: "Serviço não encontrado." });
+    }
 
     await servico.update({ nome, duracao, preco, descricao, imageUrl });
     res.json(servico);
@@ -62,7 +77,9 @@ exports.servico_update = async (req, res) => {
 exports.servico_delete = async (req, res) => {
   try {
     const servico = await db.Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).json({ mensagem: "Serviço não encontrado." });
+    if (!servico) {
+      return res.status(404).json({ mensagem: "Serviço não encontrado." });
+    }
 
     await servico.destroy();
     res.json({ mensagem: "Serviço apagado com sucesso." });
@@ -72,7 +89,7 @@ exports.servico_delete = async (req, res) => {
   }
 };
 
-// 🔹 Obter texto da seção
+// 🔹 Obter conteúdo da seção (header, título, etc)
 exports.servico_section_get = async (req, res) => {
   try {
     const section = await db.ServicesSectionConfig.findOne();
@@ -83,7 +100,7 @@ exports.servico_section_get = async (req, res) => {
   }
 };
 
-// 🔹 Atualizar texto da seção
+// 🔹 Atualizar conteúdo da seção
 exports.servico_section_update = async (req, res) => {
   try {
     const [section, created] = await db.ServicesSectionConfig.findOrCreate({
@@ -91,7 +108,9 @@ exports.servico_section_update = async (req, res) => {
       defaults: req.body,
     });
 
-    if (!created) await section.update(req.body);
+    if (!created) {
+      await section.update(req.body);
+    }
 
     res.json({ mensagem: "Seção atualizada com sucesso", section });
   } catch (err) {
