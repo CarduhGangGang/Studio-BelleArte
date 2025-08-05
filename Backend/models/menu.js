@@ -3,9 +3,8 @@ const path = require("path");
 
 const menuFilePath = path.join(__dirname, "../data/menu.json");
 
-// ✅ Menu default com logo por URL
 const defaultMenuData = {
-  logoUrl: "https://exemplo.com/logo-padrao.png", // ← altere para seu logo padrão real
+  logoUrl: "https://rdvawjefquwrqrwzoeja.supabase.co/storage/v1/object/public/images//logo-1752315447959.png",
   titles: [
     { key: "home", label: "Home", link: "/", visible: true },
     { key: "about", label: "Sobre", link: "/about-us", visible: true },
@@ -19,24 +18,24 @@ const defaultMenuData = {
 const loadMenuData = () => {
   try {
     const json = fs.readFileSync(menuFilePath, "utf-8");
-    return JSON.parse(json);
+    const parsed = JSON.parse(json);
+
+    // Garante estrutura mínima
+    return {
+      logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : defaultMenuData.logoUrl,
+      titles: Array.isArray(parsed.titles) ? parsed.titles : defaultMenuData.titles,
+    };
   } catch {
     return defaultMenuData;
   }
 };
 
 const saveMenuData = (data) => {
-  // Opcional: validar se logoUrl é uma string de URL
-  if (typeof data.logoUrl !== "string") {
-    throw new Error("logoUrl deve ser uma string de URL");
+  try {
+    fs.writeFileSync(menuFilePath, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Erro ao salvar menu.json:", err.message);
   }
-
-  // Opcional: garantir titles bem formatado
-  if (!Array.isArray(data.titles)) {
-    throw new Error("titles deve ser um array");
-  }
-
-  fs.writeFileSync(menuFilePath, JSON.stringify(data, null, 2), "utf-8");
 };
 
 module.exports = {
