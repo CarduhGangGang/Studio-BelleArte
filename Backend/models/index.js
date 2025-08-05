@@ -10,28 +10,33 @@ const db = {};
 
 let sequelize;
 
-// 🔹 Conexão com PostgreSQL (Render com variáveis individuais)
-sequelize = new Sequelize(
-  process.env.DB_NAME,       // studio_maky
-  process.env.DB_USER,       // studio_user
-  process.env.DB_PASSWORD,   // kLjDsc88LLxGMZUNjGcNv154ONrieS6U
-  {
-    host: process.env.DB_HOST,      // dpg-d24uqlp5pdvs73c9p9pg-a.frankfurt-postgres.render.com
-    port: process.env.DB_PORT || 5432,
+// 🔹 Conexão com PostgreSQL (Render/Produção ou Local)
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: "postgres",
+    protocol: "postgres",
     logging: false,
     dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
+      ssl: process.env.RENDER
+        ? { require: true, rejectUnauthorized: false }
+        : false,
     },
-  }
-);
+  });
+} else {
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST || "localhost",
+      port: process.env.DB_PORT || 5432,
+      dialect: "postgres",
+      logging: false,
+    }
+  );
+}
 
-console.log("🌍 Conectando ao PostgreSQL via variáveis de ambiente");
-
-// 🔸 Carrega todos os modelos automaticamente da pasta
+// 🔸 Carregar automaticamente todos os modelos JS na pasta (exceto este)
 fs.readdirSync(__dirname)
   .filter(
     (file) =>
@@ -56,7 +61,7 @@ fs.readdirSync(__dirname)
     }
   });
 
-// 🔸 Modelos adicionais (caso não detectados automaticamente)
+// 🔸 Modelos adicionais que podem não ter sido detectados automaticamente
 const manualModels = [
   "Header",
   "BannerService",
@@ -88,14 +93,14 @@ manualModels.forEach((name) => {
   }
 });
 
-// 🔸 Executar associações entre modelos (se existirem)
+// 🔸 Executar associações (caso existam)
 Object.keys(db).forEach((modelName) => {
   if (typeof db[modelName].associate === "function") {
     db[modelName].associate(db);
   }
 });
 
-// 🔸 Exportar instância do Sequelize e os modelos
+// 🔸 Exportar objetos Sequelize e DB
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
