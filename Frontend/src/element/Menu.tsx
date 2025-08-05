@@ -79,7 +79,11 @@ const Menu = ({
 
   // Define o logo por ordem de prioridade: prop > contexto > fallback
   useEffect(() => {
-    const selected = logoUrlProp || contextLogoUrl || IMAGE.logoBlack;
+    const defaultLogo =
+      "https://rdvawjefquwrqrwzoeja.supabase.co/storage/v1/object/public/images/logo-1752314008700.png";
+
+    const selected = logoUrlProp || contextLogoUrl || defaultLogo;
+
     const finalLogo = selected.startsWith("/uploads")
       ? `${API_BASE}${selected}`
       : selected;
@@ -134,10 +138,7 @@ const Menu = ({
           <div className="d-flex flex-wrap justify-content-between align-items-center py-2 position-relative">
             {/* 📱 Logo mobile */}
             {!hideLogo && (
-              <div
-                className="logo-header d-lg-none"
-                style={{ marginLeft: "-20px", marginTop: "15px", marginRight: "auto" }}
-              >
+              <div className="logo-header d-lg-none" style={{ marginLeft: "-20px", marginTop: "15px", marginRight: "auto" }}>
                 {isAdmin ? (
                   <img
                     src={resolvedLogo}
@@ -172,10 +173,7 @@ const Menu = ({
 
             {/* 🖥️ Logo desktop */}
             {!hideLogo && (
-              <div
-                className="d-none d-lg-flex justify-content-center w-100 position-absolute"
-                style={{ left: 0, right: 0 }}
-              >
+              <div className="d-none d-lg-flex justify-content-center w-100 position-absolute" style={{ left: 0, right: 0 }}>
                 {isAdmin ? (
                   <img
                     src={resolvedLogo}
