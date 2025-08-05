@@ -1,7 +1,5 @@
 // 📁 controllers/servicoController.js
 const db = require("../models");
-const path = require("path");
-const fs = require("fs");
 
 // 🔹 Listar todos os serviços
 exports.servico_list = async (req, res) => {
@@ -26,11 +24,10 @@ exports.servico_detail = async (req, res) => {
   }
 };
 
-// 🔹 Criar novo serviço
+// 🔹 Criar novo serviço (usando URL de imagem)
 exports.servico_create = async (req, res) => {
   try {
-    const { nome, duracao, preco, descricao } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const { nome, duracao, preco, descricao, imageUrl } = req.body;
 
     if (!nome || !duracao || !preco) {
       return res.status(400).json({ mensagem: "Campos obrigatórios: nome, duração e preço." });
@@ -44,21 +41,14 @@ exports.servico_create = async (req, res) => {
   }
 };
 
-// 🔹 Atualizar serviço
+// 🔹 Atualizar serviço (usando URL de imagem)
 exports.servico_update = async (req, res) => {
   try {
-    const { nome, duracao, preco, descricao } = req.body;
+    const { nome, duracao, preco, descricao, imageUrl } = req.body;
     const id = req.params.id;
 
     const servico = await db.Servico.findByPk(id);
     if (!servico) return res.status(404).json({ mensagem: "Serviço não encontrado." });
-
-    if (req.file && servico.imageUrl) {
-      const filePath = path.join(__dirname, "..", "public", servico.imageUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }
-
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : servico.imageUrl;
 
     await servico.update({ nome, duracao, preco, descricao, imageUrl });
     res.json(servico);
@@ -73,11 +63,6 @@ exports.servico_delete = async (req, res) => {
   try {
     const servico = await db.Servico.findByPk(req.params.id);
     if (!servico) return res.status(404).json({ mensagem: "Serviço não encontrado." });
-
-    if (servico.imageUrl) {
-      const filePath = path.join(__dirname, "..", "public", servico.imageUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }
 
     await servico.destroy();
     res.json({ mensagem: "Serviço apagado com sucesso." });

@@ -4,49 +4,54 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 const HomeCardsEditor = () => {
-  const [form, setForm] = useState<null | {
-    title: string;
-    subtitle: string;
-    author: string;
-    imageUrl?: string;
-  }>(null);
+  const [form, setForm] = useState({
+    title: "",
+    subtitle: "",
+    author: "",
+    imageUrl: "",
+  });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     getQuoteSection()
-      .then((data) => setForm(data))
-      .catch(() => toast.error("Erro ao carregar a secção de citação"));
+      .then((data) => {
+        setForm({
+          title: data.title || "",
+          subtitle: data.subtitle || "",
+          author: data.author || "",
+          imageUrl: data.imageUrl || "",
+        });
+      })
+      .catch(() => toast.error("❌ Erro ao carregar a citação."));
   }, []);
 
   const handleChange = (field: keyof typeof form, value: string) => {
-    if (!form) return;
-    setForm({ ...form, [field]: value });
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    if (!form) return;
+    if (!form.title.trim() || !form.subtitle.trim() || !form.author.trim()) {
+      toast.warning("⚠️ Preencha todos os campos obrigatórios.");
+      return;
+    }
+
     setLoading(true);
     try {
       await updateQuoteSection(form);
-      setMessage("✅ Secção atualizada com sucesso.");
-      toast.success("Citação atualizada!");
+      toast.success("✅ Citação atualizada com sucesso!");
     } catch {
-      setMessage("❌ Erro ao atualizar a citação.");
-      toast.error("Erro ao atualizar.");
+      toast.error("❌ Erro ao atualizar a citação.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!form) return <p>🔄 A carregar citação...</p>;
-
   return (
     <div className="bg-white p-4 rounded shadow-sm">
-      <h4 className="mb-4">Edição da Citação</h4>
+      <h4 className="mb-4 fw-bold">📝 Editor de Citação</h4>
 
-      {/* Preview da Citação */}
+      {/* Preview da citação */}
       <motion.div
         className="text-white mb-4 rounded text-center"
         style={{ backgroundColor: "#000", padding: "30px 20px" }}
@@ -59,6 +64,7 @@ const HomeCardsEditor = () => {
             src={form.imageUrl}
             alt="Citação"
             style={{ maxHeight: "120px", objectFit: "contain", marginBottom: "10px" }}
+            onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
           />
         )}
         <h2 className="text-xl fw-bold">{form.title || "Título da citação..."}</h2>
@@ -67,19 +73,19 @@ const HomeCardsEditor = () => {
         </p>
       </motion.div>
 
-      {message && <div className="alert alert-info py-2 mb-3">{message}</div>}
-
+      {/* Campo: URL da imagem */}
       <div className="mb-3">
         <label className="form-label">🖼️ URL da imagem (opcional)</label>
         <input
           type="text"
           className="form-control"
-          value={form.imageUrl || ""}
+          value={form.imageUrl}
           onChange={(e) => handleChange("imageUrl", e.target.value)}
-          placeholder="https://example.com/image.png"
+          placeholder="https://example.com/imagem.png"
         />
       </div>
 
+      {/* Campo: Título */}
       <div className="mb-3">
         <label className="form-label">📝 Título</label>
         <input
@@ -91,6 +97,7 @@ const HomeCardsEditor = () => {
         />
       </div>
 
+      {/* Campo: Subtítulo */}
       <div className="mb-3">
         <label className="form-label">📜 Subtítulo</label>
         <textarea
@@ -102,6 +109,7 @@ const HomeCardsEditor = () => {
         />
       </div>
 
+      {/* Campo: Autor */}
       <div className="mb-3">
         <label className="form-label">✍️ Autor</label>
         <input
@@ -113,7 +121,11 @@ const HomeCardsEditor = () => {
         />
       </div>
 
-      <button className="btn btn-dark" onClick={handleSave} disabled={loading}>
+      <button
+        className="btn btn-dark"
+        onClick={handleSave}
+        disabled={loading}
+      >
         {loading ? "💾 A guardar..." : "💾 Guardar alterações"}
       </button>
     </div>
