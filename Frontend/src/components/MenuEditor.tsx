@@ -116,7 +116,7 @@ const MenuEditor = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="https://exemplo.com/logo.png"
+            placeholder="https://rdvawjefquwrqrwzoeja.supabase.co/storage/v1/object/public/images//logo-1752314008700.png"
             value={preview}
             onChange={(e) => setPreview(e.target.value)}
           />
