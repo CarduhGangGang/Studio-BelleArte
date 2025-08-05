@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import {
   getMenuData,
   updateMenuData,
-  uploadLogo,
 } from "../services/api/menu";
 
 interface MenuItem {
@@ -40,26 +39,6 @@ const MenuEditor = () => {
 
     fetchData();
   }, [setLogoUrl]);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("❌ Tipo de imagem inválido.");
-      return;
-    }
-
-    try {
-      const uploadedUrl = await uploadLogo(file);
-      setPreview(uploadedUrl);
-      setLogoUrl(uploadedUrl);
-      toast.success("🖼️ Logo enviado com sucesso! Clique em salvar para aplicar.");
-    } catch {
-      toast.error("❌ Falha ao enviar logo");
-    }
-  };
 
   const handleSaveLogoOnly = async () => {
     try {
@@ -124,13 +103,15 @@ const MenuEditor = () => {
       <div className="p-4">
         <h4 className="mb-4">Edição do Menu</h4>
 
+        {/* CAMPO DE TEXTO PARA URL DO LOGO */}
         <div className="mb-4">
-          <label className="form-label fw-semibold">📁 Upload do Logo</label>
+          <label className="form-label fw-semibold">🌐 URL do Logo</label>
           <input
-            type="file"
-            accept="image/*"
+            type="text"
             className="form-control"
-            onChange={handleFileUpload}
+            placeholder="https://exemplo.com/logo.png"
+            value={preview}
+            onChange={(e) => setPreview(e.target.value)}
           />
         </div>
 
