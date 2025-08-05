@@ -33,7 +33,7 @@ app.use("/api/indisponibilidade", require("./routes/indisponibilidadeRoutes"));
 app.use("/api/horarios", require("./routes/horarioRoutes"));
 app.use("/api/holiday", require("./routes/holidayRoutes"));
 app.use("/api/header", require("./routes/headerRoutes"));
-app.use("/api/menu", require("./routes/menu"));
+app.use("/api/menu", require("./routes/menuRoutes"));
 app.use("/api/home-slider", require("./routes/homeSliderRoutes"));
 app.use("/api/quote-section", require("./routes/quoteSectionRoutes"));
 app.use("/api/portfolio", require("./routes/portfolioRoutes"));
