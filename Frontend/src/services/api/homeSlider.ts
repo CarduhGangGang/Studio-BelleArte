@@ -12,10 +12,3 @@ export const updateSlide = async (id: number, data: any) =>
 
 export const deleteSlide = async (id: number) =>
   await axios.delete(`${API}/${id}`);
-
-export const uploadImage = async (file: File) => {
-  const formData = new FormData();
-  formData.append("image", file);
-  const response = await axios.post(`${API}/upload`, formData);
-  return response.data.imageUrl;
-};

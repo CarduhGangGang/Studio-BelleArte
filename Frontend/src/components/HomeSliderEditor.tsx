@@ -4,7 +4,6 @@ import {
   createSlide,
   updateSlide,
   deleteSlide,
-  uploadImage,
 } from "../services/api/homeSlider";
 import { toast } from "react-toastify";
 
@@ -64,37 +63,6 @@ const HomeSliderEditor = () => {
     const updated = [...slides];
     updated[index][field] = value;
     setSlides(updated);
-  };
-
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("❌ Tipo de imagem inválido.");
-      return;
-    }
-
-    try {
-      const res = await uploadImage(file);
-      const imagePath = res?.url;
-      if (!imagePath) {
-        toast.error("❌ Upload falhou");
-        return;
-      }
-
-      const updated = [...slides];
-      updated[index].imageUrl = imagePath;
-      setSlides(updated);
-      preloadImages([fullImageUrl(imagePath)]);
-      toast.success("Imagem enviada!");
-    } catch {
-      toast.error("Erro ao enviar imagem.");
-    }
   };
 
   const handleAddSlide = () => {
@@ -205,20 +173,15 @@ const HomeSliderEditor = () => {
                 ))}
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Imagem</label>
-                  {slide.imageUrl && (
-                    <img
-                      src={fullImageUrl(slide.imageUrl)}
-                      className="img-fluid rounded mb-2"
-                      style={{ maxHeight: 160, objectFit: "cover" }}
-                      alt="preview"
-                    />
-                  )}
+                  <label className="form-label fw-semibold">URL da Imagem</label>
                   <input
-                    type="file"
-                    accept="image/*"
+                    type="text"
                     className="form-control"
-                    onChange={(e) => handleImageUpload(e, index)}
+                    placeholder="https://exemplo.com/imagem.jpg"
+                    value={slide.imageUrl}
+                    onChange={(e) =>
+                      handleInputChange(index, "imageUrl", e.target.value)
+                    }
                   />
                 </div>
 
