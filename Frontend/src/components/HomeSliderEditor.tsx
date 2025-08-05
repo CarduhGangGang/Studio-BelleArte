@@ -21,12 +21,6 @@ const HomeSliderEditor = () => {
   const [loading, setLoading] = useState(false);
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
 
-  const API_BASE = import.meta.env.VITE_API_URL;
-  const fullImageUrl = (url: string) =>
-    url.startsWith("http")
-      ? url
-      : `${API_BASE.replace(/\/$/, "")}/${url.replace(/^\/?/, "")}`;
-
   const fetchSlides = async () => {
     setLoading(true);
     try {
@@ -138,6 +132,7 @@ const HomeSliderEditor = () => {
                   </button>
                 </div>
 
+                {/* Campos de texto */}
                 {["title", "subtitle", "description"].map((field) => (
                   <div className="mb-2" key={field}>
                     <label className="form-label text-capitalize fw-semibold">
@@ -164,7 +159,7 @@ const HomeSliderEditor = () => {
                   </div>
                 ))}
 
-                {/* URL da Imagem - IGUAL AO CAMPO DE LOGO NO FOOTER */}
+                {/* CAMPO DE URL DA IMAGEM */}
                 <div className="mb-3">
                   <label className="form-label">URL da Imagem</label>
                   <input
@@ -214,7 +209,7 @@ const HomeSliderEditor = () => {
               className="rounded shadow position-relative overflow-hidden"
               style={{
                 height: "500px",
-                backgroundImage: `url(${fullImageUrl(activeSlide.imageUrl)})`,
+                backgroundImage: `url(${activeSlide.imageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
