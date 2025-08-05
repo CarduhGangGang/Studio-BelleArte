@@ -37,11 +37,7 @@ const Menu = ({
 
   const { logoUrl: contextLogoUrl, setLogoUrl: updateLogoContext } = useLogo();
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // 🔐 Logout automático
+  // Logout automático quando sai de rota protegida
   useEffect(() => {
     const tipo = localStorage.getItem("tipo") as "admin" | "studio" | "cliente";
     const prevPath = sessionStorage.getItem("prevPath");
@@ -63,7 +59,7 @@ const Menu = ({
     sessionStorage.setItem("prevPath", path);
   }, [path]);
 
-  // 🔁 Carrega menu
+  // Carrega o menu
   useEffect(() => {
     const fetchMenu = async () => {
       try {
@@ -81,7 +77,7 @@ const Menu = ({
     fetchMenu();
   }, [customTitles]);
 
-  // 🖼️ Define logo por prioridade: prop → contexto → default
+  // Define o logo por ordem de prioridade: prop > contexto > fallback
   useEffect(() => {
     const selected = logoUrlProp || contextLogoUrl || IMAGE.logoBlack;
     const finalLogo = selected.startsWith("/uploads")
@@ -92,12 +88,16 @@ const Menu = ({
     updateLogoContext(finalLogo);
   }, [logoUrlProp, contextLogoUrl, API_BASE, updateLogoContext]);
 
-  // 🎯 Detecção de scroll
+  // Altera estilo do cabeçalho ao rolar
   useEffect(() => {
     const handleScroll = () => setHeader(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const goldenColor = "#C8A047";
 
@@ -136,24 +136,14 @@ const Menu = ({
             {!hideLogo && (
               <div
                 className="logo-header d-lg-none"
-                style={{
-                  marginLeft: "-20px",
-                  marginTop: "15px",
-                  marginRight: "auto",
-                }}
+                style={{ marginLeft: "-20px", marginTop: "15px", marginRight: "auto" }}
               >
                 {isAdmin ? (
-                  <div>
-                    <img
-                      src={resolvedLogo}
-                      alt="Logo"
-                      style={{
-                        height: "60px",
-                        objectFit: "contain",
-                        cursor: "default",
-                      }}
-                    />
-                  </div>
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo"
+                    style={{ height: "60px", objectFit: "contain" }}
+                  />
                 ) : (
                   <Link to="/" className="d-block">
                     <img
@@ -187,19 +177,17 @@ const Menu = ({
                 style={{ left: 0, right: 0 }}
               >
                 {isAdmin ? (
-                  <div>
-                    <img
-                      src={resolvedLogo}
-                      alt="Logo"
-                      style={{
-                        height: "70px",
-                        objectFit: "contain",
-                        cursor: "default",
-                        marginLeft: "12px",
-                        marginTop: "45px",
-                      }}
-                    />
-                  </div>
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo"
+                    style={{
+                      height: "70px",
+                      objectFit: "contain",
+                      cursor: "default",
+                      marginLeft: "12px",
+                      marginTop: "45px",
+                    }}
+                  />
                 ) : (
                   <Link to="/" className="d-block">
                     <img

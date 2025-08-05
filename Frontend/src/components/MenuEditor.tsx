@@ -45,7 +45,7 @@ const MenuEditor = () => {
       await updateMenuData({ logoUrl: preview, titles: originalTitles });
       setOriginalLogo(preview);
       setLogoUrl(preview);
-      toast.success("🖼️ Logo salvo com sucesso!");
+      toast.success("🖼️ Logo salva com sucesso!");
     } catch {
       toast.error("❌ Erro ao salvar o logo");
     }
@@ -99,6 +99,7 @@ const MenuEditor = () => {
       transition={{ duration: 0.3 }}
       style={{ padding: "0", minHeight: "100%", overflow: "visible" }}
     >
+      {/* Preview do Menu */}
       <div
         className="border-bottom bg-white w-100 py-4"
         style={{ minHeight: "80px", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}
@@ -107,9 +108,9 @@ const MenuEditor = () => {
       </div>
 
       <div className="p-4">
-        <h4 className="mb-4">Edição do Menu</h4>
+        <h4 className="mb-4 fw-bold">🛠️ Editor de Menu</h4>
 
-        {/* CAMPO DE TEXTO PARA URL DO LOGO */}
+        {/* Campo para URL do logo */}
         <div className="mb-4">
           <label className="form-label fw-semibold">🌐 URL do Logo</label>
           <input
@@ -131,7 +132,7 @@ const MenuEditor = () => {
           </button>
         </div>
 
-        <h5 className="mb-3">📝 Itens do Menu</h5>
+        <h5 className="mb-3 fw-semibold">📝 Itens do Menu</h5>
 
         {titles.map((item, index) => (
           <div className="row align-items-center mb-3" key={item.key}>
@@ -148,6 +149,7 @@ const MenuEditor = () => {
                 }}
               />
             </div>
+
             <div className="col-md-4">
               <input
                 type="text"
@@ -161,18 +163,21 @@ const MenuEditor = () => {
                 }}
               />
             </div>
-            <div className="col-md-2">
+
+            <div className="col-md-2 d-flex align-items-center">
               <input
-                className="form-check-input"
                 type="checkbox"
+                className="form-check-input me-2"
                 checked={item.visible}
                 onChange={() => {
                   const updated = [...titles];
                   updated[index].visible = !updated[index].visible;
                   setTitles(updated);
                 }}
-              /> Visível
+              />
+              <span>Visível</span>
             </div>
+
             <div className="col-md-3 d-flex gap-2">
               <button
                 className="btn btn-outline-secondary"
@@ -182,7 +187,9 @@ const MenuEditor = () => {
                   [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
                   setTitles(updated);
                 }}
-              >⬆️</button>
+              >
+                ⬆️
+              </button>
               <button
                 className="btn btn-outline-secondary"
                 disabled={index === titles.length - 1}
@@ -191,11 +198,15 @@ const MenuEditor = () => {
                   [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
                   setTitles(updated);
                 }}
-              >⬇️</button>
+              >
+                ⬇️
+              </button>
               <button
                 className="btn btn-outline-danger"
                 onClick={() => removeItem(index)}
-              >🗑️</button>
+              >
+                🗑️
+              </button>
             </div>
           </div>
         ))}
