@@ -50,9 +50,13 @@ const ServicesSliderEditor = () => {
     loadSection();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    const parsed = ["duracao", "preco"].includes(name) ? parseFloat(value) || 0 : value;
+    const parsed = ["duracao", "preco"].includes(name)
+      ? parseFloat(value) || 0
+      : value;
     setForm((prev) => ({ ...prev, [name]: parsed }));
   };
 
@@ -132,6 +136,7 @@ const ServicesSliderEditor = () => {
         </button>
       </div>
 
+      {/* Seção do cabeçalho */}
       <div className="mb-5 bg-light p-4 rounded shadow-sm">
         <h5 className="mb-3">Texto do Cabeçalho</h5>
         <div className="mb-3">
@@ -163,6 +168,7 @@ const ServicesSliderEditor = () => {
         </div>
       </div>
 
+      {/* Formulário de serviço */}
       <form onSubmit={handleSubmit} className="mb-5 p-4 border rounded bg-white shadow-sm">
         <h5 className="mb-3">{editId ? "Editar Serviço" : "Adicionar Novo Serviço"}</h5>
 
@@ -260,6 +266,7 @@ const ServicesSliderEditor = () => {
         </div>
       </form>
 
+      {/* Lista de serviços existentes */}
       <div className="row">
         {servicos.map((servico) => (
           <div className="col-md-4 mb-4" key={servico.id}>
@@ -275,7 +282,7 @@ const ServicesSliderEditor = () => {
                 <p className="card-text text-muted">{servico.descricao}</p>
                 <p className="card-text">
                   <strong>Duração:</strong> {servico.duracao} min <br />
-                  <strong>Preço:</strong> €{!isNaN(Number(servico.preco)) ? Number(servico.preco).toFixed(2) : "0.00"}
+                  <strong>Preço:</strong> €{Number(servico.preco).toFixed(2)}
                 </p>
                 <div className="d-flex gap-2">
                   <button className="btn btn-sm btn-warning" onClick={() => handleEdit(servico)}>
