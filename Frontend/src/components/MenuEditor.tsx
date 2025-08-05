@@ -21,18 +21,30 @@ const MenuEditor = () => {
         setLogoUrl(data.logoUrl || "");
         setItems(data.titles || []);
       } catch {
-        toast.error("Erro ao carregar menu");
+        toast.error("❌ Erro ao carregar dados do menu");
       }
     };
+
     fetchData();
   }, []);
 
   const saveChanges = async () => {
+    const hasEmpty = items.some((item) => !item.label.trim() || !item.link.trim());
+    if (!logoUrl.trim()) {
+      toast.error("⚠️ URL do logo está vazia.");
+      return;
+    }
+
+    if (hasEmpty) {
+      toast.error("⚠️ Todos os campos devem estar preenchidos.");
+      return;
+    }
+
     try {
       await updateMenuData({ logoUrl, titles: items });
-      toast.success("Menu atualizado com sucesso!");
+      toast.success("💾 Menu salvo com sucesso!");
     } catch {
-      toast.error("Erro ao salvar alterações");
+      toast.error("❌ Erro ao salvar alterações");
     }
   };
 
@@ -43,13 +55,10 @@ const MenuEditor = () => {
   };
 
   const addItem = () => {
-    const newItem: MenuItem = {
-      key: `item-${Date.now()}`,
-      label: "",
-      link: "",
-      visible: true,
-    };
-    setItems([...items, newItem]);
+    setItems([
+      ...items,
+      { key: `item-${Date.now()}`, label: "", link: "", visible: true },
+    ]);
   };
 
   const removeItem = (index: number) => {
@@ -62,64 +71,66 @@ const MenuEditor = () => {
     <div className="container mt-4">
       <h2>Editor de Menu</h2>
 
-      <div className="mb-3">
-        <label className="form-label">Logo URL</label>
+      <div className="mb-4">
+        <label className="form-label fw-semibold">🌐 URL do Logo</label>
         <input
           type="text"
           className="form-control"
           value={logoUrl}
           onChange={(e) => setLogoUrl(e.target.value)}
+          placeholder="https://meu-site.com/logo.png"
         />
       </div>
 
-      {items.map((item, i) => (
-        <div className="row mb-2" key={item.key}>
-          <div className="col-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Label"
-              value={item.label}
-              onChange={(e) => updateItem(i, "label", e.target.value)}
-            />
+      <div className="mb-4">
+        <h5>📝 Itens do Menu</h5>
+        {items.map((item, index) => (
+          <div className="row mb-3" key={item.key}>
+            <div className="col-md-3">
+              <input
+                type="text"
+                className={`form-control ${!item.label.trim() ? "is-invalid" : ""}`}
+                placeholder="Texto"
+                value={item.label}
+                onChange={(e) => updateItem(index, "label", e.target.value)}
+              />
+            </div>
+            <div className="col-md-4">
+              <input
+                type="text"
+                className={`form-control ${!item.link.trim() ? "is-invalid" : ""}`}
+                placeholder="/url"
+                value={item.link}
+                onChange={(e) => updateItem(index, "link", e.target.value)}
+              />
+            </div>
+            <div className="col-md-2">
+              <label className="form-check-label me-2">Visível</label>
+              <input
+                type="checkbox"
+                className="form-check-input"
+                checked={item.visible}
+                onChange={() => updateItem(index, "visible", !item.visible)}
+              />
+            </div>
+            <div className="col-md-3">
+              <button className="btn btn-outline-danger" onClick={() => removeItem(index)}>
+                🗑️ Remover
+              </button>
+            </div>
           </div>
-          <div className="col-4">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="/link"
-              value={item.link}
-              onChange={(e) => updateItem(i, "link", e.target.value)}
-            />
-          </div>
-          <div className="col-2">
-            <input
-              type="checkbox"
-              checked={item.visible}
-              onChange={() => updateItem(i, "visible", !item.visible)}
-            />
-            <span className="ms-2">Visível</span>
-          </div>
-          <div className="col-3">
-            <button className="btn btn-danger btn-sm" onClick={() => removeItem(i)}>
-              Remover
-            </button>
-          </div>
-        </div>
-      ))}
-
-      <button className="btn btn-secondary btn-sm mb-3" onClick={addItem}>
-        ➕ Adicionar item
-      </button>
-
-      <div>
-        <button className="btn btn-primary" onClick={saveChanges}>
-          💾 Salvar
+        ))}
+        <button className="btn btn-sm btn-secondary" onClick={addItem}>
+          ➕ Adicionar item
         </button>
       </div>
 
+      <button className="btn btn-success" onClick={saveChanges}>
+        💾 Salvar Menu
+      </button>
+
       <hr />
-      <h4>Pré-visualização</h4>
+      <h5>🔍 Pré-visualização</h5>
       <Menu isAdmin logoUrl={logoUrl} customTitles={items} />
     </div>
   );
