@@ -17,6 +17,10 @@ const initialForm: ServicoData = {
   imageUrl: "",
 };
 
+const isValidImageUrl = (url: string) => {
+  return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
+};
+
 const ServicesSliderEditor = () => {
   const [servicos, setServicos] = useState<ServicoData[]>([]);
   const [form, setForm] = useState<ServicoData>(initialForm);
@@ -63,7 +67,6 @@ const ServicesSliderEditor = () => {
         await createServico(form);
         alert("Serviço criado com sucesso.");
       }
-
       setForm(initialForm);
       setEditId(null);
       await loadServicos();
@@ -129,7 +132,6 @@ const ServicesSliderEditor = () => {
         </button>
       </div>
 
-      {/* Cabeçalho da seção */}
       <div className="mb-5 bg-light p-4 rounded shadow-sm">
         <h5 className="mb-3">Texto do Cabeçalho</h5>
         <div className="mb-3">
@@ -161,7 +163,6 @@ const ServicesSliderEditor = () => {
         </div>
       </div>
 
-      {/* Formulário de serviço */}
       <form onSubmit={handleSubmit} className="mb-5 p-4 border rounded bg-white shadow-sm">
         <h5 className="mb-3">{editId ? "Editar Serviço" : "Adicionar Novo Serviço"}</h5>
 
@@ -201,7 +202,6 @@ const ServicesSliderEditor = () => {
               required
             />
           </div>
-
           <div className="col-md-6 mb-3">
             <label className="form-label">Preço (€)</label>
             <input
@@ -227,12 +227,16 @@ const ServicesSliderEditor = () => {
           />
           {form.imageUrl && (
             <div className="mt-2">
-              <img
-                src={getImage(form.imageUrl)}
-                alt="Pré-visualização"
-                className="rounded border"
-                style={{ width: "150px", height: "100px", objectFit: "cover" }}
-              />
+              {isValidImageUrl(form.imageUrl) ? (
+                <img
+                  src={getImage(form.imageUrl)}
+                  alt="Pré-visualização"
+                  className="rounded border"
+                  style={{ width: "150px", height: "100px", objectFit: "cover" }}
+                />
+              ) : (
+                <p className="text-danger">⚠️ URL inválida para imagem.</p>
+              )}
             </div>
           )}
         </div>
@@ -256,7 +260,6 @@ const ServicesSliderEditor = () => {
         </div>
       </form>
 
-      {/* Lista de serviços existentes */}
       <div className="row">
         {servicos.map((servico) => (
           <div className="col-md-4 mb-4" key={servico.id}>
