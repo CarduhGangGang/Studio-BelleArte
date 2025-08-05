@@ -1,6 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const PortfolioImage = sequelize.define("PortfolioImage", {
-    imageUrl: DataTypes.STRING,
+    imageUrl: {
+      type: DataTypes.TEXT,  // para URLs longas
+      allowNull: false,
+    },
   });
+
   return PortfolioImage;
 };

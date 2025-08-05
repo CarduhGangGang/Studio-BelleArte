@@ -3,7 +3,6 @@ import axios from "./api";
 export interface PortfolioImage {
   id?: number;
   imageUrl?: string;
-  image?: File | null;
 }
 
 // 🔹 GET imagens do portfólio
@@ -12,11 +11,9 @@ export const getPortfolioImages = async (): Promise<PortfolioImage[]> => {
   return res.data;
 };
 
-// 🔹 POST upload de imagem
-export const uploadPortfolioImage = async (data: { image: File }) => {
-  const formData = new FormData();
-  formData.append("image", data.image);
-  return axios.post("/portfolio/images", formData);
+// 🔹 POST nova imagem via URL
+export const uploadPortfolioImage = async (data: { imageUrl: string }) => {
+  return axios.post("/portfolio/images", data);
 };
 
 // 🔹 DELETE imagem

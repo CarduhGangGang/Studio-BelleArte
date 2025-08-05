@@ -15,10 +15,11 @@ export default function OurPortfolioEditor() {
   }>(null);
 
   const [images, setImages] = useState<{ id: number; imageUrl: string }[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
+  const [imageUrlInput, setImageUrlInput] = useState<string>("");
+
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL 
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const getImage = (url?: string) =>
     url?.startsWith("http")
@@ -56,18 +57,15 @@ export default function OurPortfolioEditor() {
     }
   };
 
-  const handleUpload = async () => {
-    if (!files.length) return;
-
+  const handleInsertImageUrl = async () => {
+    if (!imageUrlInput.trim()) return;
     try {
-      for (const file of files) {
-        await uploadPortfolioImage({ image: file });
-      }
-      setFiles([]);
+      await uploadPortfolioImage({ imageUrl: imageUrlInput.trim() });
+      setImageUrlInput("");
       const updated = await getPortfolioImages();
       setImages(updated);
     } catch {
-      alert("❌ Erro ao carregar imagens.");
+      alert("❌ Erro ao inserir imagem.");
     }
   };
 
@@ -130,20 +128,20 @@ export default function OurPortfolioEditor() {
       </div>
 
       <div className="mb-4 bg-light p-4 rounded shadow-sm border">
-        <h5 className="mb-3">📸 Upload de Imagens</h5>
+        <h5 className="mb-3">🔗 Inserir URL da Imagem</h5>
         <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => setFiles(Array.from(e.target.files || []))}
+          type="text"
           className="form-control mb-2"
+          placeholder="https://exemplo.com/imagem.jpg"
+          value={imageUrlInput}
+          onChange={(e) => setImageUrlInput(e.target.value)}
         />
         <button
           className="btn btn-success"
-          onClick={handleUpload}
-          disabled={!files.length}
+          onClick={handleInsertImageUrl}
+          disabled={!imageUrlInput.trim()}
         >
-          📤 Upload Imagem{files.length > 1 ? "s" : ""}
+          ➕ Adicionar Imagem por URL
         </button>
       </div>
 
