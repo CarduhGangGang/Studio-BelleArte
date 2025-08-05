@@ -132,7 +132,7 @@ const HomeSliderEditor = () => {
                   </button>
                 </div>
 
-                {/* Campos de texto */}
+                {/* Título, Subtítulo, Descrição */}
                 {["title", "subtitle", "description"].map((field) => (
                   <div className="mb-2" key={field}>
                     <label className="form-label text-capitalize fw-semibold">
@@ -161,7 +161,7 @@ const HomeSliderEditor = () => {
 
                 {/* CAMPO DE URL DA IMAGEM */}
                 <div className="mb-3">
-                  <label className="form-label">URL da Imagem</label>
+                  <label className="form-label fw-semibold">URL da Imagem</label>
                   <input
                     type="text"
                     className="form-control"
@@ -173,6 +173,7 @@ const HomeSliderEditor = () => {
                   />
                 </div>
 
+                {/* Botões */}
                 <div className="d-flex gap-2 flex-wrap">
                   <button
                     className="btn btn-success"
