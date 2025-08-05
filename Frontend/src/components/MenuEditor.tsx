@@ -1,137 +1,77 @@
 import { useEffect, useState } from "react";
-import Menu from "../element/Menu";
 import { getMenuData, updateMenuData } from "../services/api/menu";
 import { toast } from "react-toastify";
 
-interface MenuItem {
-  key: string;
-  label: string;
-  link: string;
-  visible: boolean;
-}
-
 const MenuEditor = () => {
   const [logoUrl, setLogoUrl] = useState("");
-  const [items, setItems] = useState<MenuItem[]>([]);
+  const [titles, setTitles] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const load = async () => {
       try {
         const data = await getMenuData();
-        setLogoUrl(data.logoUrl || "");
-        setItems(data.titles || []);
+        setLogoUrl(data.logoUrl);
+        setTitles(data.titles);
       } catch {
-        toast.error("❌ Erro ao carregar dados do menu");
+        toast.error("Erro ao carregar menu");
       }
     };
-
-    fetchData();
+    load();
   }, []);
 
-  const saveChanges = async () => {
-    const hasEmpty = items.some((item) => !item.label.trim() || !item.link.trim());
-    if (!logoUrl.trim()) {
-      toast.error("⚠️ URL do logo está vazia.");
-      return;
-    }
-
-    if (hasEmpty) {
-      toast.error("⚠️ Todos os campos devem estar preenchidos.");
-      return;
-    }
-
+  const handleUpdate = async () => {
     try {
-      await updateMenuData({ logoUrl, titles: items });
-      toast.success("💾 Menu salvo com sucesso!");
+      await updateMenuData({ logoUrl, titles });
+      toast.success("Salvo com sucesso!");
     } catch {
-      toast.error("❌ Erro ao salvar alterações");
+      toast.error("Erro ao salvar alterações");
     }
-  };
-
-  const updateItem = (index: number, field: keyof MenuItem, value: any) => {
-    const updated = [...items];
-    updated[index][field] = value;
-    setItems(updated);
-  };
-
-  const addItem = () => {
-    setItems([
-      ...items,
-      { key: `item-${Date.now()}`, label: "", link: "", visible: true },
-    ]);
-  };
-
-  const removeItem = (index: number) => {
-    const updated = [...items];
-    updated.splice(index, 1);
-    setItems(updated);
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Editor de Menu</h2>
+    <div className="p-4">
+      <h4>Editor de Menu</h4>
 
-      <div className="mb-4">
-        <label className="form-label fw-semibold">🌐 URL do Logo</label>
-        <input
-          type="text"
-          className="form-control"
-          value={logoUrl}
-          onChange={(e) => setLogoUrl(e.target.value)}
-          placeholder="https://meu-site.com/logo.png"
-        />
-      </div>
+      <label>Logo URL</label>
+      <input
+        className="form-control mb-3"
+        type="text"
+        value={logoUrl}
+        onChange={(e) => setLogoUrl(e.target.value)}
+      />
 
-      <div className="mb-4">
-        <h5>📝 Itens do Menu</h5>
-        {items.map((item, index) => (
-          <div className="row mb-3" key={item.key}>
-            <div className="col-md-3">
-              <input
-                type="text"
-                className={`form-control ${!item.label.trim() ? "is-invalid" : ""}`}
-                placeholder="Texto"
-                value={item.label}
-                onChange={(e) => updateItem(index, "label", e.target.value)}
-              />
-            </div>
-            <div className="col-md-4">
-              <input
-                type="text"
-                className={`form-control ${!item.link.trim() ? "is-invalid" : ""}`}
-                placeholder="/url"
-                value={item.link}
-                onChange={(e) => updateItem(index, "link", e.target.value)}
-              />
-            </div>
-            <div className="col-md-2">
-              <label className="form-check-label me-2">Visível</label>
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={item.visible}
-                onChange={() => updateItem(index, "visible", !item.visible)}
-              />
-            </div>
-            <div className="col-md-3">
-              <button className="btn btn-outline-danger" onClick={() => removeItem(index)}>
-                🗑️ Remover
-              </button>
-            </div>
+      {titles.map((item, index) => (
+        <div key={item.key} className="row mb-2">
+          <div className="col">
+            <input
+              className="form-control"
+              type="text"
+              value={item.label}
+              onChange={(e) => {
+                const newTitles = [...titles];
+                newTitles[index].label = e.target.value;
+                setTitles(newTitles);
+              }}
+            />
           </div>
-        ))}
-        <button className="btn btn-sm btn-secondary" onClick={addItem}>
-          ➕ Adicionar item
-        </button>
-      </div>
+          <div className="col">
+            <input
+              className="form-control"
+              type="text"
+              value={item.link}
+              onChange={(e) => {
+                const newTitles = [...titles];
+                newTitles[index].link = e.target.value;
+                setTitles(newTitles);
+              }}
+            />
+          </div>
+        </div>
+      ))}
 
-      <button className="btn btn-success" onClick={saveChanges}>
-        💾 Salvar Menu
+      <button className="btn btn-success mt-3" onClick={handleUpdate}>
+        Salvar
       </button>
-
-      <hr />
-      <h5>🔍 Pré-visualização</h5>
-      <Menu isAdmin logoUrl={logoUrl} customTitles={items} />
     </div>
   );
 };
