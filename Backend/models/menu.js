@@ -4,8 +4,7 @@ const path = require("path");
 const menuFilePath = path.join(__dirname, "../data/menu.json");
 
 const defaultMenuData = {
-  logoUrl:
-    "https://rdvawjefquwrqrwzoeja.supabase.co/storage/v1/object/public/images//logo-1752315447959.png",
+  logoUrl: "https://rdvawjefquwrqrwzoeja.supabase.co/storage/v1/object/public/images/logo-1752315447959.png",
   titles: [
     { key: "home", label: "Home", link: "/", visible: true },
     { key: "about", label: "Sobre", link: "/about-us", visible: true },
@@ -16,36 +15,16 @@ const defaultMenuData = {
   ],
 };
 
-const validateTitles = (titles) => {
-  return (
-    Array.isArray(titles) &&
-    titles.every(
-      (item) =>
-        item &&
-        typeof item.key === "string" &&
-        typeof item.label === "string" &&
-        typeof item.link === "string" &&
-        typeof item.visible === "boolean"
-    )
-  );
-};
-
 const loadMenuData = () => {
   try {
     const json = fs.readFileSync(menuFilePath, "utf-8");
     const parsed = JSON.parse(json);
 
     return {
-      logoUrl:
-        typeof parsed.logoUrl === "string" && parsed.logoUrl.trim()
-          ? parsed.logoUrl
-          : defaultMenuData.logoUrl,
-      titles: validateTitles(parsed.titles)
-        ? parsed.titles
-        : defaultMenuData.titles,
+      logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : defaultMenuData.logoUrl,
+      titles: Array.isArray(parsed.titles) ? parsed.titles : defaultMenuData.titles,
     };
-  } catch (err) {
-    console.warn("⚠️ Erro ao carregar menu.json, usando padrão:", err.message);
+  } catch {
     return defaultMenuData;
   }
 };
@@ -54,7 +33,7 @@ const saveMenuData = (data) => {
   try {
     fs.writeFileSync(menuFilePath, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
-    console.error("❌ Erro ao salvar menu.json:", err.message);
+    console.error("Erro ao salvar menu.json:", err.message);
   }
 };
 

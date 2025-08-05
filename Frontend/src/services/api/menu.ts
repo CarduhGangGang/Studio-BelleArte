@@ -23,5 +23,5 @@ export const getMenuData = async (): Promise<MenuData> => {
 // POST: Atualizar dados (logoUrl + menu titles)
 export const updateMenuData = async (data: MenuData): Promise<MenuData> => {
   const response = await axios.post(API_URL, data);
-  return response.data;
+  return response.data; // ✅ agora espera um objeto direto
 };
