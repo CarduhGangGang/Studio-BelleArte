@@ -15,8 +15,7 @@ export default function OurPortfolioEditor() {
   }>(null);
 
   const [images, setImages] = useState<{ id: number; imageUrl: string }[]>([]);
-  const [imageUrlInput, setImageUrlInput] = useState<string>("");
-
+  const [urlInput, setUrlInput] = useState("");
   const [loading, setLoading] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -39,7 +38,9 @@ export default function OurPortfolioEditor() {
       .catch(() => alert("Erro ao carregar imagens"));
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     if (!section) return;
     setSection((prev) => ({ ...prev!, [e.target.name]: e.target.value }));
   };
@@ -57,15 +58,16 @@ export default function OurPortfolioEditor() {
     }
   };
 
-  const handleInsertImageUrl = async () => {
-    if (!imageUrlInput.trim()) return;
+  const handleUploadByUrl = async () => {
+    if (!urlInput.trim()) return;
+
     try {
-      await uploadPortfolioImage({ imageUrl: imageUrlInput.trim() });
-      setImageUrlInput("");
+      await uploadPortfolioImage({ imageUrl: urlInput.trim() });
+      setUrlInput("");
       const updated = await getPortfolioImages();
       setImages(updated);
     } catch {
-      alert("❌ Erro ao inserir imagem.");
+      alert("❌ Erro ao adicionar imagem por URL.");
     }
   };
 
@@ -128,21 +130,23 @@ export default function OurPortfolioEditor() {
       </div>
 
       <div className="mb-4 bg-light p-4 rounded shadow-sm border">
-        <h5 className="mb-3">🔗 Inserir URL da Imagem</h5>
-        <input
-          type="text"
-          className="form-control mb-2"
-          placeholder="https://exemplo.com/imagem.jpg"
-          value={imageUrlInput}
-          onChange={(e) => setImageUrlInput(e.target.value)}
-        />
-        <button
-          className="btn btn-success"
-          onClick={handleInsertImageUrl}
-          disabled={!imageUrlInput.trim()}
-        >
-          ➕ Adicionar Imagem por URL
-        </button>
+        <h5 className="mb-3">🔗 Adicionar Imagem por URL</h5>
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="https://exemplo.com/imagem.jpg"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+          />
+          <button
+            className="btn btn-success"
+            onClick={handleUploadByUrl}
+            disabled={!urlInput.trim()}
+          >
+            📤 Adicionar Imagem
+          </button>
+        </div>
       </div>
 
       <div className="row mt-4">
