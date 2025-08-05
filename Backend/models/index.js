@@ -75,7 +75,10 @@ const manualModels = [
   "Footer",
   "MenuItem",
   "Logo",
-  "ServiceList", // ✅ incluído
+  "ServiceList"
+  "Service"
+  "ServiceSectionConfig"
+  "ServiceList"
 ];
 
 manualModels.forEach((name) => {
