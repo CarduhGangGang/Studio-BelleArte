@@ -33,7 +33,6 @@ const HomeSliderEditor = () => {
       const data = await getSlides();
       if (Array.isArray(data)) {
         setSlides(data);
-        preloadImages(data.map((s) => fullImageUrl(s.imageUrl)));
       } else {
         toast.error("Erro: dados inválidos");
       }
@@ -42,13 +41,6 @@ const HomeSliderEditor = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const preloadImages = (urls: string[]) => {
-    urls.forEach((url) => {
-      const img = new Image();
-      img.src = url;
-    });
   };
 
   useEffect(() => {
