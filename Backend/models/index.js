@@ -10,33 +10,28 @@ const db = {};
 
 let sequelize;
 
-// 🔹 Conexão com PostgreSQL (Render/Produção ou Local)
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
+// 🔹 Conexão com PostgreSQL (Render com variáveis individuais)
+sequelize = new Sequelize(
+  process.env.DB_NAME,       // studio_maky
+  process.env.DB_USER,       // studio_user
+  process.env.DB_PASSWORD,   // kLjDsc88LLxGMZUNjGcNv154ONrieS6U
+  {
+    host: process.env.DB_HOST,      // dpg-d24uqlp5pdvs73c9p9pg-a.frankfurt-postgres.render.com
+    port: process.env.DB_PORT || 5432,
     dialect: "postgres",
-    protocol: "postgres",
     logging: false,
     dialectOptions: {
-      ssl: process.env.RENDER
-        ? { require: true, rejectUnauthorized: false }
-        : false,
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  });
-} else {
-  sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST || "localhost",
-      port: process.env.DB_PORT || 5432,
-      dialect: "postgres",
-      logging: false,
-    }
-  );
-}
+  }
+);
 
-// 🔸 Carregar automaticamente todos os modelos JS na pasta (exceto este)
+console.log("🌍 Conectando ao PostgreSQL via variáveis de ambiente");
+
+// 🔸 Carrega todos os modelos automaticamente da pasta
 fs.readdirSync(__dirname)
   .filter(
     (file) =>
@@ -61,7 +56,7 @@ fs.readdirSync(__dirname)
     }
   });
 
-// 🔸 Modelos adicionais que podem não ter sido detectados automaticamente
+// 🔸 Modelos adicionais (caso não detectados automaticamente)
 const manualModels = [
   "Header",
   "BannerService",
@@ -75,10 +70,10 @@ const manualModels = [
   "Footer",
   "MenuItem",
   "Logo",
-  "ServiceList"
-  "Service"
-  "ServiceSectionConfig"
-  "ServiceList"
+  "ServiceList",
+  "Service",
+  "ServiceSectionConfig",
+  "Servico",
 ];
 
 manualModels.forEach((name) => {
@@ -93,14 +88,14 @@ manualModels.forEach((name) => {
   }
 });
 
-// 🔸 Executar associações (caso existam)
+// 🔸 Executar associações entre modelos (se existirem)
 Object.keys(db).forEach((modelName) => {
   if (typeof db[modelName].associate === "function") {
     db[modelName].associate(db);
   }
 });
 
-// 🔸 Exportar objetos Sequelize e DB
+// 🔸 Exportar instância do Sequelize e os modelos
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

@@ -1,11 +1,9 @@
 const express = require("express");
+const router = express.Router();
 const controller = require("../controllers/menuController");
 
-const router = express.Router();
-
-// Rotas do menu
-router.get("/", controller.getMenu);           // Buscar menu completo
-router.post("/", controller.updateMenu);       // Atualizar menu inteiro (logo + itens)
-router.delete("/:key", controller.deleteMenu); // ❌ Deletar item específico
+// Endpoints
+router.get("/", controller.getMenu);
+router.post("/", controller.updateMenu);
 
 module.exports = router;

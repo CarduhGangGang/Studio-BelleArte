@@ -7,23 +7,25 @@ require("dotenv").config();
 const app = express();
 
 // ✅ Middlewares globais
-app.use(cors());
+app.use(cors({
+  origin: "*", // 🔐 ajuste conforme necessário para seu domínio
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
 
-// ✅ Criar pasta de uploads se não existir
-const uploadPath = path.resolve(__dirname, "public/uploads");
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-  console.log("📁 Pasta 'public/uploads' criada automaticamente.");
+// ✅ Pasta de uploads (criar se não existir)
+const uploadDir = path.resolve(__dirname, "public/uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("📁 Pasta 'public/uploads' criada.");
 }
+app.use("/uploads", express.static(uploadDir));
 
-// ✅ Servir arquivos estáticos
-app.use("/uploads", express.static(uploadPath));
-
-// ✅ Conectar ao banco de dados
+// ✅ Conexão com o banco de dados
 const db = require("./models");
 
-// ✅ Importar e aplicar rotas principais
+// ✅ Rotas da API (organizado por módulo)
 app.use("/api/utilizador", require("./routes/utilizadorRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/agendamento", require("./routes/agendamentoRoutes"));
@@ -52,7 +54,7 @@ app.use("/api/booking-page-2-config", require("./routes/bookingPage2ConfigRoutes
 app.use("/api/booking-page-3-config", require("./routes/bookingPage3ConfigRoutes"));
 app.use("/api", require("./routes/registerContentRoutes"));
 
-// ✅ Rota de teste
+// ✅ Rota base
 app.get("/", (req, res) => {
   res.send("🎉 API Studio BelleArte está ativa!");
 });
@@ -62,13 +64,13 @@ app.use((req, res) => {
   res.status(404).json({ mensagem: "Rota não encontrada." });
 });
 
-// ❗ Tratamento global de erros
+// ❗ Erro interno global
 app.use((err, req, res, next) => {
   console.error("❌ Erro global:", err.stack || err);
   res.status(500).json({ mensagem: "Erro interno do servidor." });
 });
 
-// 🚀 Inicializar o servidor
+// 🚀 Inicialização do servidor
 const PORT = process.env.PORT || 3000;
 
 (async () => {
@@ -76,11 +78,11 @@ const PORT = process.env.PORT || 3000;
     await db.sequelize.authenticate();
     console.log("✅ Conectado ao banco de dados");
 
-    // 🔧 Sincroniza modelos com o banco (evite `alter: true` em produção)
+    // ⚠️ Use { alter: true } apenas em desenvolvimento
     await db.sequelize.sync({ alter: true });
 
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor a correr em: http://localhost:${PORT}`);
+      console.log(`🚀 Servidor rodando em: http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error("❌ Erro ao iniciar o servidor:", err);

@@ -43,7 +43,6 @@ const MenuEditor = () => {
   };
 
   const handleUpdate = async () => {
-    // Validação
     if (!logoUrl.trim()) {
       toast.warning("⚠️ Preencha o URL do logo.");
       return;
@@ -75,8 +74,10 @@ const MenuEditor = () => {
       <h4 className="mb-4">🧭 Editor de Menu</h4>
 
       <div className="mb-4">
-        <label className="form-label">🖼️ URL do Logo</label>
+        <label htmlFor="logoUrlInput" className="form-label">🖼️ URL do Logo</label>
         <input
+          id="logoUrlInput"
+          name="logoUrl"
           className="form-control"
           type="text"
           value={logoUrl}
@@ -86,7 +87,7 @@ const MenuEditor = () => {
         {logoUrl && (
           <img
             src={logoUrl}
-            alt="Preview"
+            alt="Preview do Logo"
             className="mt-3 rounded border"
             style={{ maxWidth: "200px", maxHeight: "80px" }}
           />
@@ -113,8 +114,10 @@ const MenuEditor = () => {
             className="row align-items-end mb-3 border rounded p-3 bg-light"
           >
             <div className="col-md-3">
-              <label className="form-label">Texto</label>
+              <label htmlFor={`label-${item.key}`} className="form-label">Texto</label>
               <input
+                id={`label-${item.key}`}
+                name={`label-${item.key}`}
                 type="text"
                 className="form-control"
                 value={item.label}
@@ -122,8 +125,10 @@ const MenuEditor = () => {
               />
             </div>
             <div className="col-md-4">
-              <label className="form-label">Link</label>
+              <label htmlFor={`link-${item.key}`} className="form-label">Link</label>
               <input
+                id={`link-${item.key}`}
+                name={`link-${item.key}`}
                 type="text"
                 className="form-control"
                 value={item.link}
@@ -131,13 +136,19 @@ const MenuEditor = () => {
               />
             </div>
             <div className="col-md-2">
-              <label className="form-label d-block">Visível</label>
-              <input
-                type="checkbox"
-                className="form-check-input mt-2"
-                checked={item.visible}
-                onChange={(e) => handleChange(index, "visible", e.target.checked)}
-              />
+              <div className="form-check mt-4">
+                <input
+                  id={`visible-${item.key}`}
+                  name={`visible-${item.key}`}
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={item.visible}
+                  onChange={(e) => handleChange(index, "visible", e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor={`visible-${item.key}`}>
+                  Visível
+                </label>
+              </div>
             </div>
             <div className="col-md-3 text-end">
               <button
