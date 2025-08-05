@@ -36,7 +36,7 @@ if (process.env.DATABASE_URL) {
   );
 }
 
-// 🔸 Carregamento automático de todos os modelos
+// 🔸 Carregamento automático de todos os modelos JS exceto este
 fs.readdirSync(__dirname)
   .filter(
     (file) =>
@@ -61,7 +61,7 @@ fs.readdirSync(__dirname)
     }
   });
 
-// 🔸 Modelos manuais que não carregaram automaticamente
+// 🔸 Modelos adicionais que não foram automaticamente detectados
 const manualModels = [
   "Header",
   "BannerService",
@@ -73,6 +73,8 @@ const manualModels = [
   "BookingPage2Config",
   "BookingPage3Config",
   "Footer",
+  "MenuItem",
+  "Logo"
 ];
 
 manualModels.forEach((name) => {
@@ -94,7 +96,7 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-// 🔸 Exportar DB + conexão Sequelize
+// 🔸 Exportar DB + Sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
