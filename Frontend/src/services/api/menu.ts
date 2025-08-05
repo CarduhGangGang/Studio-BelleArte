@@ -14,14 +14,14 @@ export interface MenuData {
   titles: MenuItem[];
 }
 
-// GET: Buscar dados do menu (inclui logo por URL)
+// 📥 GET: Buscar dados do menu (inclui logo por URL)
 export const getMenuData = async (): Promise<MenuData> => {
-  const response = await axios.get(API_URL);
-  return response.data;
+  const { data } = await axios.get<MenuData>(API_URL);
+  return data;
 };
 
-// POST: Atualizar dados (logoUrl + menu titles)
+// 💾 POST: Atualizar dados do menu (logo + títulos)
 export const updateMenuData = async (data: MenuData): Promise<MenuData> => {
-  const response = await axios.post(API_URL, data);
-  return response.data; // ✅ agora espera um objeto direto
+  const response = await axios.post<MenuData>(API_URL, data);
+  return response.data;
 };

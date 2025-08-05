@@ -32,6 +32,7 @@ const updateMenu = async (req, res) => {
       return res.status(400).json({ error: "Lista de títulos inválida" });
     }
 
+    // Limpa todos os itens anteriores e recria com novos
     await MenuItem.destroy({ where: {} });
 
     const cleanTitles = titles.map(({ key, label, link, visible }) => ({
@@ -50,7 +51,30 @@ const updateMenu = async (req, res) => {
   }
 };
 
+// DELETE /api/menu/:key
+const deleteMenu = async (req, res) => {
+  const { key } = req.params;
+
+  if (!key) {
+    return res.status(400).json({ error: "Chave do item é obrigatória." });
+  }
+
+  try {
+    const deleted = await MenuItem.destroy({ where: { key } });
+
+    if (deleted === 0) {
+      return res.status(404).json({ error: "Item não encontrado." });
+    }
+
+    return res.json({ success: true, message: `Item '${key}' removido.` });
+  } catch (err) {
+    console.error("Erro ao apagar item do menu:", err.message);
+    return res.status(500).json({ error: "Erro ao apagar item do menu." });
+  }
+};
+
 module.exports = {
   getMenu,
   updateMenu,
+  deleteMenu,
 };
