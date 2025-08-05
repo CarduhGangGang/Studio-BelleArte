@@ -3,16 +3,16 @@ const { MenuItem, Logo } = require("../models");
 // GET /api/menu
 const getMenu = async (req, res) => {
   try {
-    const logo = await Logo.findOne({ order: [["updatedAt", "DESC"]] });
+    const logo = await Logo.findOne({ order: [["id", "DESC"]] });
     const titles = await MenuItem.findAll({ order: [["id", "ASC"]] });
 
     return res.json({
-      logoUrl: logo ? logo.url : "",
+      logoUrl: logo?.url || "",
       titles,
     });
   } catch (err) {
-    console.error("Erro ao carregar menu:", err.message);
-    return res.status(500).json({ error: "Erro ao carregar menu" });
+    console.error("Erro ao buscar menu:", err.message);
+    return res.status(500).json({ error: "Erro ao buscar menu" });
   }
 };
 
@@ -21,34 +21,19 @@ const updateMenu = async (req, res) => {
   const { logoUrl, titles } = req.body;
 
   try {
-    // Atualiza ou cria novo logo
     if (logoUrl) {
       await Logo.create({ url: logoUrl });
     }
 
     if (Array.isArray(titles)) {
-      await MenuItem.destroy({ where: {} }); // Limpa itens anteriores
-
-      const cleaned = titles.map((item) => ({
-        key: item.key,
-        label: item.label,
-        link: item.link,
-        visible: item.visible ?? true,
-      }));
-
-      await MenuItem.bulkCreate(cleaned);
+      await MenuItem.destroy({ where: {} }); // limpa tudo
+      await MenuItem.bulkCreate(titles);
     }
 
-    const updatedLogo = await Logo.findOne({ order: [["updatedAt", "DESC"]] });
-    const updatedTitles = await MenuItem.findAll({ order: [["id", "ASC"]] });
-
-    return res.json({
-      logoUrl: updatedLogo?.url || "",
-      titles: updatedTitles,
-    });
+    return res.json({ success: true });
   } catch (err) {
-    console.error("Erro ao salvar menu:", err.message);
-    return res.status(500).json({ error: "Erro ao salvar menu" });
+    console.error("Erro ao atualizar menu:", err.message);
+    return res.status(500).json({ error: "Erro ao atualizar menu" });
   }
 };
 
